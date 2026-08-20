@@ -1,0 +1,6 @@
+appId: com.moniva.moniNote
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*"
+    timeout: 10000

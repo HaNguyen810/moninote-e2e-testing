@@ -1,0 +1,23 @@
+url: https://dev-app.moninotes.com
+env:
+  TEST_PASSWORD: "TestPass123!"
+---
+- launchApp
+- runScript: ../scripts/generate-test-email.js
+- extendedWaitUntil:
+    visible: "^Enter email address$"
+    timeout: 45000
+- tapOn:
+    text: "^Sign up$"
+    optional: true
+- assertVisible: "Create account"
+- tapOn: "^Enter email address$"
+- inputText: ${output.email}
+- tapOn: "^Password$"
+- inputText: ${TEST_PASSWORD}
+- tapOn: "^Confirm password$"
+- inputText: ${TEST_PASSWORD}
+- tapOn:
+    text: "Create account"
+    index: 1
+- assertVisible: "Select a plan"

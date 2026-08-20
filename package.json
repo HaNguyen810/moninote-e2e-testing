@@ -1,0 +1,17 @@
+{
+  "name": "moninotes-maestro",
+  "version": "1.0.0",
+  "description": "Maestro automation testing for Moninotes web and Android mobile",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "maestro:android": "tsx scripts/run-maestro.ts android",
+    "maestro:web": "tsx scripts/run-maestro.ts web",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^7.0.2"
+  }
+}

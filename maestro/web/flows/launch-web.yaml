@@ -1,0 +1,5 @@
+url: https://dev-app.moninotes.com
+---
+- launchApp
+- assertVisible:
+    text: ".*"
