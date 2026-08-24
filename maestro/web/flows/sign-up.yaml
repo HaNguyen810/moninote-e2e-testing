@@ -5,19 +5,28 @@ env:
 - launchApp
 - runScript: ../scripts/generate-test-email.js
 - extendedWaitUntil:
-    visible: "^Enter email address$"
+    visible: '^Enter email address\s*$'
     timeout: 45000
 - tapOn:
     text: "^Sign up$"
     optional: true
 - assertVisible: "Create account"
-- tapOn: "^Enter email address$"
+- tapOn: '^Enter email address\s*$'
 - inputText: ${output.email}
-- tapOn: "^Password$"
+- tapOn: '^Password\s*$'
 - inputText: ${TEST_PASSWORD}
-- tapOn: "^Confirm password$"
+- tapOn: '^Confirm password\s*$'
 - inputText: ${TEST_PASSWORD}
+# Known blocker: past this point, the app's SharedWorker-based encryption init
+# ("Decrypting your notes") hangs indefinitely under Maestro/Selenium automation,
+# even though the same steps complete normally in a manual browser. Verified manually
+# in a real Chrome tab up to reaching /notes; steps below are authored against that
+# manual run and will not pass in Maestro until the app-side automation incompatibility
+# is fixed.
 - tapOn:
     text: "Create account"
     index: 1
 - assertVisible: "Select a plan"
+- tapOn:
+    point: "97%,6%" # close icon (X) on the plan-selector modal, keeps Free plan
+- assertVisible: "Add a note"

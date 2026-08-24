@@ -57,8 +57,10 @@ npm run maestro:web sign-in                                  # via wrapper, one 
 
 Current web flows:
 - `launch-web.yaml` — smoke test, app loads
-- `sign-up.yaml` — creates a new account with a freshly generated test email
+- `sign-up.yaml` — creates a new account with a freshly generated test email, picks the Free plan, lands on `/notes`
 - `sign-in.yaml` — signs in with a fixed mailinator test account and completes MFA via `get-mfa-code.js`
+
+> **Known blocker:** `sign-up.yaml` currently fails past "Select a plan". The app's SharedWorker-based encryption init ("Decrypting your notes") hangs indefinitely under Maestro/Selenium browser automation, even though the identical steps complete normally in a manually-driven Chrome tab. This needs an app-side fix (or at least investigation) — it's not something fixable from the flow YAML. The steps past that point are written and verified against a manual run, ready to pass once the app-side issue is resolved.
 
 ## Android flows
 
