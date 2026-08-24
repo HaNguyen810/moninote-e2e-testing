@@ -15,10 +15,12 @@ const flows = requested
   ? [requested.endsWith('.yaml') ? requested : `${requested}.yaml`]
   : readdirSync(flowsDir).filter((f) => f.endsWith('.yaml'));
 
+const args = target === 'web' ? ['test', '--headless'] : ['test'];
+
 for (const flow of flows) {
   const flowPath = path.join(flowsDir, flow);
-  console.log(`\n▶ maestro test ${flow}`);
-  const result = spawnSync('maestro', ['test', flowPath], { stdio: 'inherit' });
+  console.log(`\n▶ maestro ${[...args, flow].join(' ')}`);
+  const result = spawnSync('maestro', [...args, flowPath], { stdio: 'inherit' });
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }

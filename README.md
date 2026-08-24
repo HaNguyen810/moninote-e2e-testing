@@ -47,11 +47,13 @@ url: https://dev-app.moninotes.com
 Run (PowerShell):
 
 ```powershell
-maestro test maestro/web/flows/launch-web.yaml   # single flow
-maestro test maestro/web/flows/                  # every flow in the folder
-npm run maestro:web                              # via wrapper, all web flows
-npm run maestro:web sign-in                      # via wrapper, one flow by name
+maestro test --headless maestro/web/flows/launch-web.yaml   # single flow
+maestro test --headless maestro/web/flows/                  # every flow in the folder
+npm run maestro:web                                          # via wrapper, all web flows, headless
+npm run maestro:web sign-in                                  # via wrapper, one flow by name, headless
 ```
+
+`npm run maestro:web` always runs with `--headless` (the wrapper adds it automatically) so the bundled Chromium never pops up a visible window — this avoids a one-time "Chromium is installed, click Close to launch" prompt on first run. Run `maestro test` directly (without `--headless`) if you want to watch the browser while authoring a flow.
 
 Current web flows:
 - `launch-web.yaml` — smoke test, app loads
