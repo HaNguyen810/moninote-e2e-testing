@@ -10,16 +10,21 @@ const deadline = Date.now() + 90000;
 let code = null;
 
 while (!code && Date.now() < deadline) {
-  const listResp = http.get(`https://api.mailinator.com/api/v2/domains/public/inboxes/${inbox}`);
-  const messages = json(listResp.body).msgs || [];
-  const latest = messages.sort((a, b) => b.time - a.time)[0];
+  try {
+    const listResp = http.get(`https://api.mailinator.com/api/v2/domains/public/inboxes/${inbox}`);
+    const messages = json(listResp.body).msgs || [];
+    const latest = messages.sort((a, b) => b.time - a.time)[0];
 
-  if (latest) {
-    const msgResp = http.get(
-      `https://api.mailinator.com/api/v2/domains/public/inboxes/${inbox}/messages/${latest.id}`
-    );
-    const match = msgResp.body.match(/\b\d{6}\b/);
-    if (match) code = match[0];
+    if (latest) {
+      const msgResp = http.get(
+        `https://api.mailinator.com/api/v2/domains/public/inboxes/${inbox}/messages/${latest.id}`
+      );
+      const match = msgResp.body.match(/\b\d{6}\b/);
+      if (match) code = match[0];
+    }
+  } catch (e) {
+    // Transient network hiccup or a non-JSON response from a rate-limited/cold
+    // request - keep polling rather than aborting the whole script.
   }
 
   if (!code) busyWait(5000);

@@ -1,23 +1,22 @@
 url: https://dev-app.moninotes.com
 env:
   TEST_MFA_EMAIL: "moninotes-signintest-mfa@mailinator.com"
-  TEST_MFA_PASSWORD: "TestPass123!"
 ---
-- launchApp
-- tapOn: "^Enter email address$"
+- launchApp:
+    clearState: true
+- openLink: https://dev-app.moninotes.com/login
+- extendedWaitUntil:
+    visible: '^Enter email address\s*$'
+    timeout: 20000
+- tapOn: '^Enter email address\s*$'
 - inputText: ${TEST_MFA_EMAIL}
 - tapOn: "Continue"
-- assertVisible: "Account password"
-- tapOn: "^Enter account password$"
-- inputText: ${TEST_MFA_PASSWORD}
-- tapOn: "Login to your account"
 - assertVisible: "Two factor authentication"
 - runScript:
     file: ../scripts/get-mfa-code.js
     env:
       INBOX_EMAIL: ${TEST_MFA_EMAIL}
-- tapOn: "^Enter 6 digit code$"
+- tapOn: '^Enter 6 digit code\s*$'
 - inputText: ${output.code}
 - tapOn: "Submit"
-- assertVisible:
-    text: ".*"
+- assertVisible: "Add a note"

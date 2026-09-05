@@ -33,7 +33,7 @@ Setup below is written for **Windows** (PowerShell). macOS/Linux users can use t
 
 ## Web flows
 
-No device setup needed. Maestro manages its own Chromium instance automatically (downloads it on first run).
+No device setup needed. Maestro's `chromium` web device actually drives your system-installed Google Chrome, automated via WebDriver with a disposable temp profile — there's no separate Chromium binary and no way to point it at a different browser.
 
 Flow YAML uses `url:` instead of `appId:`:
 
@@ -60,7 +60,10 @@ Current web flows:
 - `sign-up.yaml` — creates a new account with a freshly generated test email, picks the Free plan, lands on `/notes`
 - `sign-in.yaml` — signs in with a fixed mailinator test account and completes MFA via `get-mfa-code.js`
 
-> **Known blocker:** `sign-up.yaml` currently fails past "Select a plan". The app's SharedWorker-based encryption init ("Decrypting your notes") hangs indefinitely under Maestro/Selenium browser automation, even though the identical steps complete normally in a manually-driven Chrome tab. This needs an app-side fix (or at least investigation) — it's not something fixable from the flow YAML. The steps past that point are written and verified against a manual run, ready to pass once the app-side issue is resolved.
+> **Known blocker:** `sign-up.yaml` is unreliable under Maestro, but the flow itself and the app are not at fault. Two separate root causes were confirmed via direct network/console inspection (Playwright), running the identical steps end-to-end with zero errors, reaching `/notes`:
+>
+> 1. **Intermittent `503` on `/assets/wa-sqlite-*.wasm`** — the WASM SQLite module the SharedWorker-based encryption init depends on. On a cold hit right after the dev server/CDN has been idle, it 503s a couple of times before self-healing to `200`. If the SharedWorker's fetch 503s and doesn't retry, encryption init hangs forever ("Decrypting your notes"). This is a dev-server/asset flakiness issue, not an automation incompatibility — worth flagging to whoever owns `dev-app.moninotes.com`'s infra, and/or fixing client-side by having the SharedWorker retry a failed module fetch.
+> 2. **Maestro's web driver (still Beta) is itself unreliable** — independent of the above, `tapOn`/`assertVisible`/`extendedWaitUntil` element searches can hang for minutes on this app, on different steps across different runs, regardless of `--screen-size` or explicit `timeout:` values (which aren't reliably honored — an `extendedWaitUntil` with `timeout: 5000` was observed hanging 3+ minutes past its own bound). This isn't fixable from flow YAML; it needs a Maestro CLI fix or a more stable release. `sign-up.yaml` wraps its element searches in bounded `extendedWaitUntil` checks as a fail-fast attempt, but this does not reliably work around the underlying hang.
 
 ## Android flows
 
