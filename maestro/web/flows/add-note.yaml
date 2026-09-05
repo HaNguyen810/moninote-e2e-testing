@@ -1,0 +1,19 @@
+url: https://dev-app.moninotes.com
+---
+# Reuses sign-up.yaml (in the same browser session, via runFlow) to get a freshly
+# authenticated account rather than repeating account creation inline. sign-in.yaml
+# was the other option, but it depends on Mailinator's API for the MFA code, which
+# is slower and can hit rate limits - sign-up.yaml is self-contained and fast.
+- runFlow: sign-up.yaml
+- launchApp
+- assertVisible: "Add a note"
+- tapOn: "Add a note"
+- tapOn: "Note title"
+- inputText: "My First Note"
+# The note body is an empty contenteditable paragraph with a CSS-only placeholder
+# ("Start writing your note...") - it has no matchable text/id until it holds
+# content, so focus is moved there the same way a user would: Enter after the title.
+- pressKey: "Enter"
+- inputText: "This is a note created by Maestro automation."
+- assertVisible: "My First Note"
+- assertVisible: "This is a note created by Maestro automation."

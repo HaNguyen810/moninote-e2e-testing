@@ -59,11 +59,11 @@ Current web flows:
 - `launch-web.yaml` — smoke test, app loads
 - `sign-up.yaml` — creates a new account with a freshly generated test email, picks the Free plan, lands on `/notes`
 - `sign-in.yaml` — signs in with a fixed mailinator test account and completes MFA via `get-mfa-code.js`
+- `add-note.yaml` — chains `sign-up.yaml` via `runFlow` for a freshly authenticated session (in the same browser tab), re-launches the app to confirm the session survives, then creates a note and verifies its title and body were saved
 
-> **Known blocker:** `sign-up.yaml` is unreliable under Maestro, but the flow itself and the app are not at fault. Two separate root causes were confirmed via direct network/console inspection (Playwright), running the identical steps end-to-end with zero errors, reaching `/notes`:
->
-> 1. **Intermittent `503` on `/assets/wa-sqlite-*.wasm`** — the WASM SQLite module the SharedWorker-based encryption init depends on. On a cold hit right after the dev server/CDN has been idle, it 503s a couple of times before self-healing to `200`. If the SharedWorker's fetch 503s and doesn't retry, encryption init hangs forever ("Decrypting your notes"). This is a dev-server/asset flakiness issue, not an automation incompatibility — worth flagging to whoever owns `dev-app.moninotes.com`'s infra, and/or fixing client-side by having the SharedWorker retry a failed module fetch.
-> 2. **Maestro's web driver (still Beta) is itself unreliable** — independent of the above, `tapOn`/`assertVisible`/`extendedWaitUntil` element searches can hang for minutes on this app, on different steps across different runs, regardless of `--screen-size` or explicit `timeout:` values (which aren't reliably honored — an `extendedWaitUntil` with `timeout: 5000` was observed hanging 3+ minutes past its own bound). This isn't fixable from flow YAML; it needs a Maestro CLI fix or a more stable release. `sign-up.yaml` wraps its element searches in bounded `extendedWaitUntil` checks as a fail-fast attempt, but this does not reliably work around the underlying hang.
+`maestro test <folder>/` runs each flow file in its own isolated browser in parallel — it does not share session state between files. `runFlow` is the only way to carry a session from one set of steps into the next, since a subflow runs in the same browser tab as its parent.
+
+> **Resolved:** the web flows used to hang unpredictably (`tapOn`/`assertVisible`/`extendedWaitUntil` stalling for minutes regardless of `timeout:`). Root cause was Maestro CLI 2.8.0's bundled Selenium missing a CDP (DevTools Protocol) implementation for Chrome 150+, silently falling back to a broken no-op stub — see the CLI 2.9.0+ requirement above. Upgrading resolved it; all web flows now run reliably headless with no hangs. If a run still stalls, confirm `maestro --version` is 2.9.0 or newer first.
 
 ## Android flows
 
