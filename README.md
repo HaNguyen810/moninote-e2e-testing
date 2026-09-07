@@ -4,32 +4,20 @@ Automation testing for Moninotes using [Maestro](https://maestro.dev/):
 - **Moninotes Web** (`dev-app.moninotes.com`) — web platform (Beta)
 - **Android mobile** (`com.moniva.moniNote`)
 
-Setup below is written for **Windows** (PowerShell). macOS/Linux users can use the one-line curl installer instead — see the [official install docs](https://docs.maestro.dev/maestro-cli/how-to-install-maestro-cli).
+Setup below is written for **Windows**. All flows are authored and run through **Maestro Studio** — no separate CLI install or Java runtime needed, Studio ships with its own bundled JVM and engine.
 
 ## Prerequisites (Windows)
 
-1. **Java 17+** — Maestro CLI requires it. Install Temurin JDK or Oracle JDK, then confirm `JAVA_HOME` points at it:
-   ```powershell
-   java -version
-   echo $env:JAVA_HOME
-   ```
-2. **Node.js** (for the npm wrapper) — install from [nodejs.org](https://nodejs.org).
-3. **Git** — to clone this repo.
+1. **Git** — to clone this repo.
 
-## Install Maestro CLI (Windows)
+## Install Maestro Studio (Windows)
 
-1. Download the latest `maestro.zip` from the [Maestro GitHub releases](https://github.com/mobile-dev-inc/maestro/releases).
-2. Extract it to a stable location, e.g. `C:\maestro`.
-3. Add it to your PATH (PowerShell, run as your user — restart the terminal after):
-   ```powershell
-   setx PATH "$env:PATH;C:\maestro\bin"
-   ```
-4. Verify:
-   ```powershell
-   maestro --version
-   ```
+1. Download the Windows installer from the [Maestro Studio GitHub releases](https://github.com/mobile-dev-inc/maestro-studio/releases) — grab `win-Maestro-Studio-x64-setup.exe` from the latest release.
+2. Run the installer and launch **Maestro Studio**.
+3. Connect a device: for web, point it at a Chrome session; for Android, pick your running emulator/device.
+4. Open a flow file (e.g. `maestro/web/flows/sign-up.yaml`) from this repo to run or step through it.
 
-> Maestro also supports installing inside WSL2, but the Maestro team recommends against it on Windows — it needs extra ADB port bridging (5037) between WSL and Windows and can cause flaky device detection. Prefer the native Windows CLI above.
+> **Note — a known Chrome-compatibility issue.** Web flows can hang indefinitely (no timeout, no error — `tapOn`/`assertVisible`/etc. just stall) against Chrome 150+, because Studio's bundled Selenium falls back to a broken no-op CDP (DevTools Protocol) implementation when it can't find one matching the browser version. Studio bundles its own JVM and engine, so this needs a Studio update specifically — check for a newer release if you hit it. Its logs live under `%APPDATA%\maestro-studio\logs\studio-server.log`; a `"no-op implementation of the CDP"` error there confirms this issue.
 
 ## Web flows
 
@@ -44,16 +32,7 @@ url: https://dev-app.moninotes.com
 - assertVisible: "some text"
 ```
 
-Run (PowerShell):
-
-```powershell
-maestro test --headless maestro/web/flows/launch-web.yaml   # single flow
-maestro test --headless maestro/web/flows/                  # every flow in the folder
-npm run maestro:web                                          # via wrapper, all web flows, headless
-npm run maestro:web sign-in                                  # via wrapper, one flow by name, headless
-```
-
-`npm run maestro:web` always runs with `--headless` (the wrapper adds it automatically) so the bundled Chromium never pops up a visible window — this avoids a one-time "Chromium is installed, click Close to launch" prompt on first run. Run `maestro test` directly (without `--headless`) if you want to watch the browser while authoring a flow.
+Run from Maestro Studio: connect the Chrome web device, open a flow file under `maestro/web/flows/`, and click Run.
 
 Current web flows:
 - `launch-web.yaml` — smoke test, app loads
@@ -61,9 +40,9 @@ Current web flows:
 - `sign-in.yaml` — signs in with a fixed mailinator test account and completes MFA via `get-mfa-code.js`
 - `add-note.yaml` — chains `sign-up.yaml` via `runFlow` for a freshly authenticated session (in the same browser tab), re-launches the app to confirm the session survives, then creates a note and verifies its title and body were saved
 
-`maestro test <folder>/` runs each flow file in its own isolated browser in parallel — it does not share session state between files. `runFlow` is the only way to carry a session from one set of steps into the next, since a subflow runs in the same browser tab as its parent.
+Running multiple flow files independently gives each its own isolated browser — session state isn't shared between them. `runFlow` is the way to carry a session from one set of steps into the next, since a subflow runs in the same browser tab as its parent (see how `add-note.yaml` reuses `sign-up.yaml`).
 
-> **Resolved:** the web flows used to hang unpredictably (`tapOn`/`assertVisible`/`extendedWaitUntil` stalling for minutes regardless of `timeout:`). Root cause was Maestro CLI 2.8.0's bundled Selenium missing a CDP (DevTools Protocol) implementation for Chrome 150+, silently falling back to a broken no-op stub — see the CLI 2.9.0+ requirement above. Upgrading resolved it; all web flows now run reliably headless with no hangs. If a run still stalls, confirm `maestro --version` is 2.9.0 or newer first.
+If a web flow hangs unpredictably (`tapOn`/`assertVisible`/`extendedWaitUntil` stalling for minutes regardless of `timeout:`), see the Chrome-compatibility note under Install Maestro Studio above.
 
 ## Android flows
 
@@ -89,25 +68,23 @@ appId: com.moniva.moniNote
 - launchApp
 ```
 
-Run:
-
-```powershell
-maestro test maestro/android/flows/launch-app.yaml
-npm run maestro:android
-npm run maestro:android sign-up
-```
+Run from Maestro Studio: connect your emulator/device, open a flow file under `maestro/android/flows/`, and click Run.
 
 Current Android flows:
 - `launch-app.yaml` — smoke test, app loads
 - `sign-up.yaml` — creates a new account with a freshly generated test email, confirms it via `get-confirmation-link.js`
 
-## npm wrapper
+## npm wrapper (optional, requires the Maestro CLI)
 
 ```powershell
 npm install
+npm run maestro:web            # all web flows, headless
+npm run maestro:web sign-in    # one flow by name, headless
+npm run maestro:android
+npm run maestro:android sign-up
 ```
 
-`scripts/run-maestro.ts` shells out to the `maestro` CLI per flow file (`npm run maestro:<android|web> [flow-name]`) — Maestro itself has no native TS API, flows stay in YAML. This is optional convenience; `maestro test <path>` works standalone with no npm/TypeScript involved.
+`scripts/run-maestro.ts` shells out to the `maestro` CLI per flow file — Maestro itself has no native TS API, flows stay in YAML. **This is the one path in this repo that still needs the CLI**, separately from Maestro Studio: install it from the [official install docs](https://docs.maestro.dev/maestro-cli/how-to-install-maestro-cli) (Java 17+ required) if you want to run flows this way, e.g. for scripting or CI. It isn't needed for the Studio-based workflow described above.
 
 ## Structure
 
@@ -122,5 +99,5 @@ npm install
 │       ├── flows/         # *.yaml Maestro flows (url-based)
 │       └── scripts/       # JS helpers (test email, MFA code)
 └── scripts/
-    └── run-maestro.ts     # optional TS wrapper to run Maestro flows
+    └── run-maestro.ts     # optional TS wrapper to run Maestro flows via the CLI
 ```
