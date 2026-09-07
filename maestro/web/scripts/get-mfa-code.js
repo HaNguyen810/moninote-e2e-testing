@@ -7,19 +7,33 @@ function busyWait(ms) {
 
 const inbox = INBOX_EMAIL.split('@')[0];
 const deadline = Date.now() + 90000;
+// Set by snapshot-inbox.js beforehand, if the flow runs it - excludes messages
+// that already existed before this login attempt, so a stale code from an
+// earlier run can never be picked up. Optional: falls back to no exclusions.
+const knownIds = new Set((typeof KNOWN_MESSAGE_IDS !== 'undefined' && KNOWN_MESSAGE_IDS ? KNOWN_MESSAGE_IDS.split(',') : []));
 let code = null;
 
 while (!code && Date.now() < deadline) {
   try {
     const listResp = http.get(`https://api.mailinator.com/api/v2/domains/public/inboxes/${inbox}`);
     const messages = json(listResp.body).msgs || [];
-    const latest = messages.sort((a, b) => b.time - a.time)[0];
+    // A fresh signup account can receive other emails first (account confirmation,
+    // failed-login notices) - filter to the actual code email, not just "latest",
+    // or a false match against a stray 6-digit sequence elsewhere sends a wrong code.
+    const codeEmails = messages.filter(
+      (m) => /verification code/i.test(m.subject || '') && !knownIds.has(m.id)
+    );
+    const latest = codeEmails.sort((a, b) => b.time - a.time)[0];
 
     if (latest) {
       const msgResp = http.get(
         `https://api.mailinator.com/api/v2/domains/public/inboxes/${inbox}/messages/${latest.id}`
       );
-      const match = msgResp.body.match(/\b\d{6}\b/);
+      // Match against the plain-text body part specifically, not the raw response
+      // (which includes headers/DKIM blobs that can contain stray 6-digit sequences).
+      const parts = json(msgResp.body).parts || [];
+      const text = (parts[0] && parts[0].body) || '';
+      const match = text.match(/\b\d{6}\b/);
       if (match) code = match[0];
     }
   } catch (e) {
@@ -27,7 +41,7 @@ while (!code && Date.now() < deadline) {
     // request - keep polling rather than aborting the whole script.
   }
 
-  if (!code) busyWait(5000);
+  if (!code) busyWait(15000);
 }
 
 if (!code) {
