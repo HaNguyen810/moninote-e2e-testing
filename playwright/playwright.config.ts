@@ -36,6 +36,10 @@ export default defineConfig({
     // "Add" button just re-shows "Please grant notifications permission to
     // add new reminders." and does nothing (confirmed 2026-09-16).
     permissions: ['clipboard-read', 'clipboard-write', 'notifications'],
+    // Needed for "Export as" - Playwright's default is already true, but
+    // set explicitly since a downloaded file's content is read directly in
+    // tests (see NoteContextMenu.exportAs()), not just its existence.
+    acceptDownloads: true,
   },
 
   projects: [

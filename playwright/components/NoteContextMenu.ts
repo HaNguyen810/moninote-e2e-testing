@@ -1,5 +1,7 @@
-import type { Page, Locator } from '@playwright/test';
+import type { Page, Locator, Download } from '@playwright/test';
 import { expect } from '@playwright/test';
+
+export type ExportFormat = 'pdf' | 'md' | 'md-frontmatter' | 'html' | 'txt';
 
 /**
  * The right-click context menu on a note list item. There is no visible
@@ -162,6 +164,27 @@ export class NoteContextMenu {
   async setExpiry(noteItem: Locator): Promise<void> {
     await this.openFor(noteItem);
     await this.menuItem('expiry-date').click();
+  }
+
+  /**
+   * Exports the note and returns the resulting Download. Confirmed
+   * 2026-09-16: this is a genuine browser file download (Playwright's
+   * `download` event fires), not a native print/save dialog - its content
+   * can be read directly via `download.createReadStream()`. `format` maps
+   * to the export submenu's own test ids: pdf, md, md-frontmatter, html, txt.
+   */
+  async exportAs(noteItem: Locator, format: ExportFormat): Promise<Download> {
+    await this.openFor(noteItem);
+    await this.menuItem('export').click();
+
+    // PDF generation in particular can take longer than the config's 15s
+    // actionTimeout default (client-side rendering) - give this specific
+    // wait more room rather than raising the global default.
+    const [download] = await Promise.all([
+      this.page.waitForEvent('download', { timeout: 30_000 }),
+      this.menuItem(format).click(),
+    ]);
+    return download;
   }
 
   /**
