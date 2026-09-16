@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/MoniNotes_Logo_Ambang.svg" />
+    <link rel="icon" type="image/png" href="/MoniNotes_Logo_Ambang.png" />
+    <link rel="apple-touch-icon" href="/MoniNotes_Logo_Ambang.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <!-- <link rel="manifest" href="/manifest.json" /> -->
+    <!--
+      Notice the use of  in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <meta name="description" content="Your private note taking space" />
+    <meta property="og:title" content="MoniNotes" />
+    <meta
+      property="og:description"
+      content="A fully open source & end-to-end encrypted note taking alternative to Evernote."
+    />
+    <meta property="og:image" content="https://app.moninotes.com/Cover_Moninote.png?v=1" />
+    <meta
+      property="og:image:alt"
+      content="A fully open source & end-to-end encrypted note taking alternative to Evernote."
+    />
+    <meta property="og:url" content="https://app.notesnook.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Notesnook by Streetwriters LLC" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>MoniNotes</title>
+
+    <style id="theme-colors"></style>
+    <script type="635e92f84ff2998c5237e19a-text/javascript">
+      (async function validateServiceWorkerTrack() {
+        const cookie = document.cookie.match(/release\-track=([^;]+)/);
+        const releaseTrack = cookie ? cookie[1] : "stable";
+        const expectedPrefix =
+          releaseTrack === "beta" ? "notesnook-beta" : "notesnook";
+
+        const cacheKeys = await caches.keys();
+        const mismatched = cacheKeys.some(
+          (key) => !key.startsWith(expectedPrefix)
+        );
+
+        if (mismatched) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map((r) => r.unregister()));
+          await Promise.all(cacheKeys.map((key) => caches.delete(key)));
+          window.location.reload();
+        }
+      })();
+    </script>
+    <style>
+      html {
+        -ms-scroll-chaining: none;
+            overscroll-behavior: none;
+      }
+
+      html[data-theme="light"] .react-loading-skeleton {
+        --base-color: var(--background-secondary);
+        --highlight-color: #var(--background-secondary);
+      }
+
+      html[data-theme="dark"] .react-loading-skeleton {
+        --base-color: var(--background-secondary);
+        --highlight-color: var(--background-secondary);
+      }
+
+      #splash {
+        background-color: var(--background);
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+            flex-direction: column;
+        -ms-flex-pack: center;
+            justify-content: center;
+        -ms-flex-align: center;
+            align-items: center;
+      }
+
+      #splash svg {
+        -ms-transform: scale(1);
+            transform: scale(1);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(0.9);
+        }
+
+        70% {
+          transform: scale(1);
+        }
+
+        100% {
+          transform: scale(0.9);
+        }
+      }
+
+      html,
+      body {
+        font-size: 16px;
+      }
+
+      @media only screen and (max-width: 480px) {
+        html,
+        body {
+          font-size: 18px;
+          background-color: var(--background);
+        }
+      }
+
+      :root,
+      body,
+      #root {
+        margin: 0 !important;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      #root {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+            flex-direction: column;
+      }
+
+      /* svg {
+  width: 1.5rem;
+} */
+      .ReactModal__Overlay {
+        opacity: 0;
+        transition: opacity 200ms ease-in-out;
+      }
+
+      .ReactModal__Overlay--after-open {
+        opacity: 1;
+      }
+
+      .ReactModal__Overlay--before-close {
+        opacity: 0;
+      }
+
+      .slide {
+        background-color: transparent !important;
+      }
+
+      .carousel.carousel-slider {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: row;
+            flex-direction: row;
+      }
+    </style>
+    <script type="635e92f84ff2998c5237e19a-module" crossorigin src="/assets/index-B97vinZF.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-NLya30xiEdJ2.css">
+  <link rel="prefetch" href="/assets/wa-sqlite-GAFrro9IzHUj.wasm"><link rel="manifest" href="/manifest.webmanifest"></head>
+
+  <body class="theme-scope-base">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!--     <script src="https://cdn.jsdelivr.net/npm/highlightjs@9.16.2/highlight.pack.min.js"></script>
+ -->
+    <div id="root"></div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      style="height: 0; width: 0; z-index: -1; position: absolute"
+    >
+      <symbol id="full-logo" viewBox="0 0 40 40" fill="none">
+        <g filter="url(#full_logo_filter0)">
+          <rect width="40" height="40" rx="6" fill="url(#full_logo_paint0)" />
+          <path
+            d="M15.8654 33.4375H8.48214C7.42195 33.4375 6.5625 32.578 6.5625 31.5179V24.1346L15.8654 33.4375Z"
+            fill="url(#full_logo_paint1)"
+          />
+          <path
+            d="M33.4375 21.0337V29.5982C33.4374 30.3875 33.4374 30.5442 33.4375 31.5173C33.4375 32.5775 32.578 33.4375 31.5179 33.4375H21.0337L15.8654 28.2692V20L24.1346 28.2692H28.2692V15.8654L33.4375 21.0337Z"
+            fill="url(#full_logo_paint2)"
+          />
+          <path
+            d="M24.1346 11.7308V20L15.823 11.7308H11.7308V24.1346L6.5625 18.9663V8.48214C6.5625 7.42195 7.42195 6.5625 8.48214 6.5625H18.9663L24.1346 11.7308Z"
+            fill="url(#full_logo_paint3)"
+          />
+          <path
+            d="M33.4375 15.8654L24.1346 6.5625H31.5187C32.5789 6.5625 33.4384 7.42208 33.4383 8.48235L33.4375 15.8654Z"
+            fill="url(#full_logo_paint4)"
+          />
+          <path
+            d="M16.1582 33.5586H8.48242C7.35535 33.5586 6.44141 32.6446 6.44141 31.5176V23.8418L16.1582 33.5586ZM31.5186 6.44141C32.6457 6.44141 33.5597 7.35527 33.5596 8.48242L33.5586 15.8652V16.1572L33.3516 15.9512L23.8418 6.44141H31.5186ZM33.5586 31.5176C33.5585 32.6445 32.6446 33.5586 31.5176 33.5586H20.9834L15.7441 28.3193V19.708L15.9512 19.9141L24.1855 28.1484H28.1484V15.5732L33.5586 20.9834V31.5176ZM24.2559 20.291L24.0488 20.0859L15.7725 11.8516H11.8516V24.4268L6.44141 19.0166V8.48242C6.44141 7.35535 7.35535 6.44141 8.48242 6.44141H19.0166L24.2559 11.6807V20.291Z"
+            stroke="url(#full_logo_paint5)"
+            stroke-opacity="0.2"
+            stroke-width="0.242188"
+          />
+          <path
+            d="M15.8654 33.4375H8.48214C7.42195 33.4375 6.5625 32.578 6.5625 31.5179V24.1346L15.8654 33.4375Z"
+            fill="url(#full_logo_paint6)"
+          />
+          <path
+            d="M33.4375 21.0337V29.5982C33.4374 30.3875 33.4374 30.5442 33.4375 31.5173C33.4375 32.5775 32.578 33.4375 31.5179 33.4375H21.0337L15.8654 28.2692V20L24.1346 28.2692H28.2692V15.8654L33.4375 21.0337Z"
+            fill="url(#full_logo_paint7)"
+          />
+          <path
+            d="M24.1346 11.7308V20L15.823 11.7308H11.7308V24.1346L6.5625 18.9663V8.48214C6.5625 7.42195 7.42195 6.5625 8.48214 6.5625H18.9663L24.1346 11.7308Z"
+            fill="url(#full_logo_paint8)"
+          />
+          <path
+            d="M33.4375 15.8654L24.1346 6.5625H31.5187C32.5789 6.5625 33.4384 7.42208 33.4383 8.48235L33.4375 15.8654Z"
+            fill="url(#full_logo_paint9)"
+          />
+          <path
+            d="M15.5166 33.293H8.48242C7.50205 33.293 6.70703 32.4979 6.70703 31.5176V24.4834L15.5166 33.293ZM33.293 21.0938V31.5176C33.2929 32.4979 32.4978 33.293 31.5176 33.293H21.0938L16.0098 28.209V20.3486L24.0752 28.4141H28.4141V16.2148L33.293 21.0938ZM8.48242 6.70703H18.9062L23.9902 11.791V19.6523L15.9248 11.6279L15.8828 11.5859H11.5859V23.7852L6.70703 18.9062V8.48242C6.70703 7.50205 7.50205 6.70703 8.48242 6.70703ZM31.5186 6.70703C32.499 6.70703 33.2941 7.50198 33.2939 8.48242L33.293 15.5166L24.4834 6.70703H31.5186Z"
+            stroke="url(#full_logo_paint10)"
+            stroke-opacity="0.6"
+            stroke-width="0.289062"
+          />
+        </g>
+        <defs>
+          <filter
+            id="full_logo_filter0"
+            x="-0.078125"
+            y="-0.15625"
+            width="40.1172"
+            height="40.3125"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="BackgroundImageFix"
+              result="shape"
+            />
+            <feColorMatrix
+              in="SourceAlpha"
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+              result="hardAlpha"
+            />
+            <feMorphology
+              radius="0.3125"
+              operator="erode"
+              in="SourceAlpha"
+              result="effect1_innerShadow_50_16"
+            />
+            <feOffset dx="0.0390625" dy="0.15625" />
+            <feGaussianBlur stdDeviation="0.15625" />
+            <feComposite
+              in2="hardAlpha"
+              operator="arithmetic"
+              k2="-1"
+              k3="1"
+            />
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0.0958158 0 0 0 0 0.375526 0 0 0 0 0.934946 0 0 0 0.8 0"
+            />
+            <feBlend
+              mode="normal"
+              in2="shape"
+              result="effect1_innerShadow_50_16"
+            />
+            <feColorMatrix
+              in="SourceAlpha"
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+              result="hardAlpha"
+            />
+            <feMorphology
+              radius="0.3125"
+              operator="erode"
+              in="SourceAlpha"
+              result="effect2_innerShadow_50_16"
+            />
+            <feOffset dx="-0.078125" dy="-0.15625" />
+            <feGaussianBlur stdDeviation="0.15625" />
+            <feComposite
+              in2="hardAlpha"
+              operator="arithmetic"
+              k2="-1"
+              k3="1"
+            />
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0.383348 0 0 0 0 1 0 0 0 0.7 0"
+            />
+            <feBlend
+              mode="normal"
+              in2="effect1_innerShadow_50_16"
+              result="effect2_innerShadow_50_16"
+            />
+          </filter>
+          <linearGradient
+            id="full_logo_paint0"
+            x1="51.2009"
+            y1="53.9541"
+            x2="-2.22757"
+            y2="-2.3331"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#0C2FA5" />
+            <stop offset="1" stop-color="#002FFF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint1"
+            x1="-2.18315"
+            y1="-12.5601"
+            x2="33.5943"
+            y2="76.2211"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" stop-opacity="0.9" />
+            <stop offset="0.783654" stop-color="#5597EB" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint2"
+            x1="-2.18315"
+            y1="-12.5601"
+            x2="33.5943"
+            y2="76.2211"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" stop-opacity="0.9" />
+            <stop offset="0.783654" stop-color="#5597EB" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint3"
+            x1="-2.18315"
+            y1="-12.5601"
+            x2="33.5943"
+            y2="76.2211"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" stop-opacity="0.9" />
+            <stop offset="0.783654" stop-color="#5597EB" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint4"
+            x1="-2.18315"
+            y1="-12.5601"
+            x2="33.5943"
+            y2="76.2211"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" stop-opacity="0.9" />
+            <stop offset="0.783654" stop-color="#5597EB" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint5"
+            x1="-2.78076"
+            y1="-1.70765"
+            x2="105.219"
+            y2="129.863"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" />
+            <stop offset="0.783654" stop-color="#5597EB" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint6"
+            x1="-2.18315"
+            y1="-12.5601"
+            x2="47.8313"
+            y2="92.342"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" />
+            <stop offset="0.783654" stop-color="#5597EB" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint7"
+            x1="-2.18315"
+            y1="-12.5601"
+            x2="47.8313"
+            y2="92.342"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" />
+            <stop offset="0.783654" stop-color="#5597EB" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint8"
+            x1="-2.18315"
+            y1="-12.5601"
+            x2="47.8313"
+            y2="92.342"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" />
+            <stop offset="0.783654" stop-color="#5597EB" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint9"
+            x1="-2.18315"
+            y1="-12.5601"
+            x2="47.8313"
+            y2="92.342"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" />
+            <stop offset="0.783654" stop-color="#5597EB" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+          <linearGradient
+            id="full_logo_paint10"
+            x1="-2.78076"
+            y1="-1.70765"
+            x2="105.219"
+            y2="129.863"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#E5FFFF" />
+            <stop offset="0.389423" stop-color="white" stop-opacity="0.9" />
+            <stop offset="0.783654" stop-color="#5597EB" />
+            <stop offset="1" stop-color="#7CB4EF" />
+          </linearGradient>
+        </defs>
+      </symbol>
+      <symbol id="themed-logo" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="6" style="fill: var(--heading)" />
+        <path
+          style="fill: var(--background)"
+          d="M15.8654 33.4375H8.48214C7.42195 33.4375 6.5625 32.578 6.5625 31.5179V24.1346L15.8654 33.4375Z"
+        />
+        <path
+          style="fill: var(--background)"
+          d="M33.4375 21.0337V29.5982C33.4374 30.3875 33.4374 30.5442 33.4375 31.5173C33.4375 32.5775 32.578 33.4375 31.5179 33.4375H21.0337L15.8654 28.2692V20L24.1346 28.2692H28.2692V15.8654L33.4375 21.0337Z"
+        />
+        <path
+          style="fill: var(--background)"
+          d="M24.1346 11.7308V20L15.823 11.7308H11.7308V24.1346L6.5625 18.9663V8.48214C6.5625 7.42195 7.42195 6.5625 8.48214 6.5625H18.9663L24.1346 11.7308Z"
+        />
+        <path
+          style="fill: var(--background)"
+          d="M33.4375 15.8654L24.1346 6.5625H31.5187C32.5789 6.5625 33.4384 7.42208 33.4383 8.48235L33.4375 15.8654Z"
+        />
+        <path
+          d="M16.1582 33.5586H8.48242C7.35535 33.5586 6.44141 32.6446 6.44141 31.5176V23.8418L16.1582 33.5586ZM31.5186 6.44141C32.6457 6.44141 33.5597 7.35527 33.5596 8.48242L33.5586 15.8652V16.1572L33.3516 15.9512L23.8418 6.44141H31.5186ZM33.5586 31.5176C33.5585 32.6445 32.6446 33.5586 31.5176 33.5586H20.9834L15.7441 28.3193V19.708L15.9512 19.9141L24.1855 28.1484H28.1484V15.5732L33.5586 20.9834V31.5176ZM24.2559 20.291L24.0488 20.0859L15.7725 11.8516H11.8516V24.4268L6.44141 19.0166V8.48242C6.44141 7.35535 7.35535 6.44141 8.48242 6.44141H19.0166L24.2559 11.6807V20.291Z"
+          fill="none"
+          stroke="var(--paragraph)"
+          stroke-opacity="0.25"
+          stroke-width="0.242188"
+        />
+        <path
+          d="M15.5166 33.293H8.48242C7.50205 33.293 6.70703 32.4979 6.70703 31.5176V24.4834L15.5166 33.293ZM33.293 21.0938V31.5176C33.2929 32.4979 32.4978 33.293 31.5176 33.293H21.0938L16.0098 28.209V20.3486L24.0752 28.4141H28.4141V16.2148L33.293 21.0938ZM8.48242 6.70703H18.9062L23.9902 11.791V19.6523L15.9248 11.6279L15.8828 11.5859H11.5859V23.7852L6.70703 18.9062V8.48242C6.70703 7.50205 7.50205 6.70703 8.48242 6.70703ZM31.5186 6.70703C32.499 6.70703 33.2941 7.50198 33.2939 8.48242L33.293 15.5166L24.4834 6.70703H31.5186Z"
+          fill="none"
+          stroke="var(--paragraph)"
+          stroke-opacity="0.45"
+          stroke-width="0.289062"
+        />
+      </symbol>
+    </svg>
+    <div id="splash" class="hidden">
+      <svg style="height: 120px">
+        <use href="#full-logo" />
+      </svg>
+      <span
+        style="
+          margin-top: 10px;
+          font-family: Hack, Consolas, 'Andale Mono', 'Lucida Console',
+            'Liberation Mono', 'Courier New', Courier, monospace;
+          color: var(--paragraph);
+          font-size: 0.8rem;
+        "
+      >
+        Starting up the engines
+      </span>
+    </div>
+    <div id="dialogContainer"></div>
+    <div id="floatingViewContainer"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  <foreignObject><script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="635e92f84ff2998c5237e19a-|49" defer></script></foreignObject></body>
+</html>

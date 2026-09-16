@@ -1,15 +1,19 @@
 {
-  "name": "moninotes-maestro",
+  "name": "moninotes-automation",
   "version": "1.0.0",
-  "description": "Maestro automation testing for Moninotes web and Android mobile",
+  "description": "Automation testing for Moninotes web and Android mobile (Maestro + Playwright)",
   "private": true,
   "type": "module",
   "scripts": {
     "maestro:android": "tsx scripts/run-maestro.ts android",
     "maestro:web": "tsx scripts/run-maestro.ts web",
+    "test:web": "playwright test -c playwright/playwright.config.ts",
+    "test:web:ui": "playwright test -c playwright/playwright.config.ts --ui",
+    "test:web:report": "playwright show-report",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.0",
     "@types/node": "^24.0.0",
     "tsx": "^4.19.0",
     "typescript": "^7.0.2"
