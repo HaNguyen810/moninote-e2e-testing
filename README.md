@@ -78,6 +78,8 @@ Current specs:
 - `tests/notes/plan-gating.spec.ts` - "Set expiry" is Pro-plan-gated; a Free-plan account gets an upgrade paywall instead of the expiry dialog
 - `tests/notes/export.spec.ts` - Markdown/Text/HTML export each produce a genuine browser download with verifiable content; PDF deliberately not covered (see Known issues)
 - `tests/notes/upload-attachment.spec.ts` - the PNG/GIF/JPEG/PDF upload-and-decrypt regression run manually on 2026-09-15 (boss's ask after an afternoon spot-check found images failing to decrypt), now codified as specs
+- `tests/settings/profile.spec.ts` - Profile shows the account's plan/email and Sessions section; Change email address and Attachments manager open correctly; Save Account recovery key requires re-entering the account password (Delete account/Logout are entry-point-only - warning/confirmation text checked, never clicked)
+- `tests/settings/authentication.spec.ts` - Change password's dialog and its requirements list; Change 2FA method requires re-entering the account password
 - `tests/settings/subscription.spec.ts` - Settings > Subscription details shows the current plan and its usage limits; its Upgrade button opens the plan selection modal
 - `tests/settings/sync.spec.ts` - Settings > Sync's four toggles and Force push/pull are Essential-plan-gated on Free (same paywall pattern as plan-gating.spec.ts), and its "Compare all plans" link opens the full plan comparison modal
 - `tests/settings/plan-selection.spec.ts` - the "Select a plan" pricing modal shows correct Yearly pricing; also documents a real bug (see Known issues) via `test.fail()`

@@ -6,10 +6,10 @@ type SyncToggleLabel = 'Enable sync' | 'Enable auto sync' | 'Enable realtime syn
 
 /**
  * The Settings dialog (opened via AccountMenu.openSettingsMenu()), scoped to
- * the Account section's Profile/Subscription details/Sync tabs - the ones
- * this suite actually exercises. Customization/Import & export/Privacy &
- * security/Other sections and the Authentication tab exist (confirmed
- * 2026-09-17) but aren't covered here.
+ * the Account section's Profile/Subscription details/Sync/Authentication
+ * tabs - the ones this suite actually exercises. Customization/Import &
+ * export/Privacy & security/Other sections exist (confirmed 2026-09-17) but
+ * aren't covered here.
  */
 export class SettingsPage {
   constructor(private readonly page: Page) {}
@@ -28,8 +28,65 @@ export class SettingsPage {
     await expect(this.page.getByText('SYNC', { exact: true })).toBeVisible();
   }
 
+  async goToAuthentication(): Promise<void> {
+    await this.page.getByText('Authentication', { exact: true }).click();
+    await expect(this.page.getByText('PASSWORD', { exact: true })).toBeVisible();
+  }
+
   async close(): Promise<void> {
     await this.page.keyboard.press('Escape');
+  }
+
+  // --- Profile ---
+
+  /**
+   * Several Profile rows render their action button with the exact same
+   * text as the row's own heading (e.g. heading "Change email address" +
+   * button "Change email address"), so an exact-text match resolves to 2
+   * elements - `.last()` picks the button, which always renders after the
+   * heading/description block. Confirmed 2026-09-17.
+   */
+  async openChangeEmail(): Promise<void> {
+    await this.page.getByText('Change email address', { exact: true }).last().click();
+  }
+
+  async openAttachmentsManager(): Promise<void> {
+    await this.page.getByText('Open', { exact: true }).click();
+  }
+
+  /** Opens the "Please verify it's you" password-reauth dialog, same as openChange2faMethod(). */
+  async clickSaveRecoveryKey(): Promise<void> {
+    await this.page.getByText('Save', { exact: true }).click();
+  }
+
+  get deleteAccountWarning() {
+    return this.page.getByText(
+      'All your data will be removed permanently. Make sure you have saved backup of your notes. This action is IRREVERSIBLE.',
+      { exact: true },
+    );
+  }
+
+  get logoutRowDescription() {
+    return this.page.getByText(
+      'Are you sure you want to logout from this device? Any unsynced changes will be lost.',
+      { exact: true },
+    );
+  }
+
+  get logoutAllDevicesRowDescription() {
+    return this.page.getByText('Force logout from all your logged in devices.', { exact: true });
+  }
+
+  // --- Authentication ---
+
+  /** Same heading-equals-button-text duplication as openChangeEmail() above. */
+  async openChangePassword(): Promise<void> {
+    await this.page.getByText('Change password', { exact: true }).last().click();
+  }
+
+  /** Opens the "Please verify it's you" password-reauth dialog, same as clickSaveRecoveryKey(). */
+  async openChange2faMethod(): Promise<void> {
+    await this.page.getByText('Change', { exact: true }).click();
   }
 
   // --- Subscription details ---
