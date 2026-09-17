@@ -1,7 +1,7 @@
 /**
  * Central place for environment/config constants shared across the Playwright suite.
- * Mirrors the accounts and base URL already used by the Maestro web flows
- * (see ../../maestro/web) so both automation stacks target the same test data.
+ * Mirrors the accounts and base URL already used by the now-removed Maestro web
+ * flows, so this suite targets the same test data those did.
  */
 
 export const BASE_URL = 'https://dev-app.moninotes.com';

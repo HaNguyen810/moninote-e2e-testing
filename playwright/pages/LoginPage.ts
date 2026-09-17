@@ -4,9 +4,9 @@ import { MfaModal } from '../components/MfaModal';
 
 /**
  * The /login flow: email -> 2FA code -> account password.
- * Order confirmed against a fresh account by the existing Maestro sign-in
- * flow (see ../../maestro/web/flows/sign-in.yaml) - password is asked for
- * *after* the code is accepted, not before.
+ * Order confirmed against a fresh account by the now-removed Maestro
+ * sign-in.yaml flow - password is asked for *after* the code is accepted,
+ * not before.
  */
 export class LoginPage {
   readonly mfa: MfaModal;

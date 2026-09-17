@@ -1,7 +1,7 @@
 /**
  * Polls the Mailinator public API for a MoniNotes verification/MFA code.
- * Ported from ../../maestro/web/scripts/{snapshot-inbox,get-mfa-code}.js so both
- * automation stacks share the same polling/filtering behavior against the same
+ * Ported from the now-removed Maestro web flows' snapshot-inbox/get-mfa-code
+ * scripts, keeping the same polling/filtering behavior against the same
  * rate-limited public inbox.
  */
 
@@ -53,8 +53,8 @@ export async function waitForVerificationCode(
 ): Promise<string> {
   // Mailinator's public API rate-limits aggressive polling (HTTP 429 /
   // Cloudflare error 1015, confirmed 2026-09-15) - 15s matches the interval
-  // already proven out by ../../maestro/web/scripts/get-mfa-code.js against
-  // this same shared inbox tier.
+  // already proven out by the now-removed Maestro get-mfa-code.js script
+  // against this same shared inbox tier.
   const { subjectPattern, knownIds = new Set(), timeoutMs = 90_000, pollIntervalMs = 15_000 } =
     options;
   const inbox = inboxNameFor(email);

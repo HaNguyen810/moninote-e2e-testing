@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "maestro:android": "tsx scripts/run-maestro.ts android",
-    "maestro:web": "tsx scripts/run-maestro.ts web",
     "test:web": "playwright test -c playwright/playwright.config.ts",
     "test:web:ui": "playwright test -c playwright/playwright.config.ts --ui",
     "test:web:report": "playwright show-report",

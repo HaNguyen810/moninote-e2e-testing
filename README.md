@@ -4,9 +4,9 @@ Automation testing for Moninotes, split by platform:
 - **Android mobile** (`com.moniva.moniNote`) — [Maestro](https://maestro.dev/), `maestro/android/`
 - **Moninotes Web** (`dev-app.moninotes.com`) — [Playwright](https://playwright.dev/), `playwright/`
 
-Web used to be covered by Maestro too (`maestro/web/`, kept for now) but Maestro's web flows drive Chrome via WebDriver/CDP and have a documented hang bug on newer Chrome (see the note below) plus no ability to inspect network/console/DOM state - Playwright doesn't have either limitation and can additionally drive file-upload-shaped flows (see [Web flows (Playwright)](#web-flows-playwright) below) that Maestro's web driver can't. `maestro/web/` should be phased out once Playwright covers the same flows.
+Web used to be covered by Maestro too, but Maestro's web flows drove Chrome via WebDriver/CDP and had a documented hang bug on newer Chrome plus no ability to inspect network/console/DOM state - Playwright doesn't have either limitation and can additionally drive file-upload-shaped flows that Maestro's web driver couldn't. The legacy `maestro/web/` flows have been removed now that Playwright covers the same ground.
 
-The Maestro setup below is written for **Windows**. All Maestro flows are authored and run through **Maestro Studio** — no separate CLI install or Java runtime needed, Studio ships with its own bundled JVM and engine. Playwright is a standalone npm dependency and works cross-platform.
+The Maestro setup below is written for **Windows** and covers Android only. All Maestro flows are authored and run through **Maestro Studio** — no separate CLI install or Java runtime needed, Studio ships with its own bundled JVM and engine. Playwright is a standalone npm dependency and works cross-platform.
 
 ## Prerequisites (Windows)
 
@@ -16,35 +16,8 @@ The Maestro setup below is written for **Windows**. All Maestro flows are author
 
 1. Download the Windows installer from the [Maestro Studio GitHub releases](https://github.com/mobile-dev-inc/maestro-studio/releases) — grab `win-Maestro-Studio-x64-setup.exe` from the latest release.
 2. Run the installer and launch **Maestro Studio**.
-3. Connect a device: for web, point it at a Chrome session; for Android, pick your running emulator/device.
-4. Open a flow file (e.g. `maestro/web/flows/sign-up.yaml`) from this repo to run or step through it.
-
-> **Note — a known Chrome-compatibility issue.** Web flows can hang indefinitely (no timeout, no error — `tapOn`/`assertVisible`/etc. just stall) against Chrome 150+, because Studio's bundled Selenium falls back to a broken no-op CDP (DevTools Protocol) implementation when it can't find one matching the browser version. Studio bundles its own JVM and engine, so this needs a Studio update specifically — check for a newer release if you hit it. Its logs live under `%APPDATA%\maestro-studio\logs\studio-server.log`; a `"no-op implementation of the CDP"` error there confirms this issue.
-
-## Web flows
-
-No device setup needed. Maestro's `chromium` web device actually drives your system-installed Google Chrome, automated via WebDriver with a disposable temp profile — there's no separate Chromium binary and no way to point it at a different browser.
-
-Flow YAML uses `url:` instead of `appId:`:
-
-```yaml
-url: https://dev-app.moninotes.com
----
-- launchApp
-- assertVisible: "some text"
-```
-
-Run from Maestro Studio: connect the Chrome web device, open a flow file under `maestro/web/flows/`, and click Run.
-
-Current web flows:
-- `launch-web.yaml` — smoke test, app loads
-- `sign-up.yaml` — creates a new account with a freshly generated test email, picks the Free plan, lands on `/notes`
-- `sign-in.yaml` — signs in with a fixed mailinator test account and completes MFA via `get-mfa-code.js`
-- `add-note.yaml` — chains `sign-up.yaml` via `runFlow` for a freshly authenticated session (in the same browser tab), re-launches the app to confirm the session survives, then creates a note and verifies its title and body were saved
-
-Running multiple flow files independently gives each its own isolated browser — session state isn't shared between them. `runFlow` is the way to carry a session from one set of steps into the next, since a subflow runs in the same browser tab as its parent (see how `add-note.yaml` reuses `sign-up.yaml`).
-
-If a web flow hangs unpredictably (`tapOn`/`assertVisible`/`extendedWaitUntil` stalling for minutes regardless of `timeout:`), see the Chrome-compatibility note under Install Maestro Studio above.
+3. Connect a device: pick your running Android emulator/device.
+4. Open a flow file (e.g. `maestro/android/flows/sign-up.yaml`) from this repo to run or step through it.
 
 ## Android flows
 
@@ -114,7 +87,7 @@ Current specs:
 
 **Cold load time is inconsistent - ~10s one day, up to ~40s the next.** The app runs through a multi-tab SharedWorker/IndexedDB provider election ("Starting up the engines" → sometimes "Migrating database. This might take a while." → "Decrypting your notes") before rendering `/login` or `/signup`. This took ~10s on 2026-09-15 but was measured up to ~40s on 2026-09-16 against the same environment with no code changes on this suite's side - it isn't a fixed constant to tune once. `LoginPage.goto()`/`SignUpPage.goto()` wait for the email field specifically at 45s, and the global `expect.timeout` in `playwright.config.ts` is set to 15s (Playwright's own default is 5s) so a bare `expect()` without its own override (e.g. `waitUntilLoaded()`) doesn't flake on a slow day either. If tests start timing out again, check whether the cold load itself is just slower right now before assuming a regression.
 
-**Mailinator's public API rate-limits polling, and can just be unreliable.** The same free-tier inbox used by the Maestro web flows (`moninotes-signintest-mfa@mailinator.com`) returns HTTP 429 if polled faster than roughly every 15s, and separately can return plain HTTP 500s or simply never receive an email at all (confirmed by checking the inbox directly - `curl -i https://api.mailinator.com/api/v2/domains/public/inboxes/moninotes-signintest-mfa`) with nothing to do with this suite's code. `utils/mailinator.ts` polls at 15s intervals to match the cadence already proven out by `maestro/web/scripts/get-mfa-code.js`. **This is why `freshNotesPage` (sign-up) is preferred over `notesPage` (sign-in) wherever a test doesn't specifically need the fixed account** - sign-up needs no email round-trip at all.
+**Mailinator's public API rate-limits polling, and can just be unreliable.** The same free-tier inbox used by the now-removed Maestro web flows (`moninotes-signintest-mfa@mailinator.com`) returns HTTP 429 if polled faster than roughly every 15s, and separately can return plain HTTP 500s or simply never receive an email at all (confirmed by checking the inbox directly - `curl -i https://api.mailinator.com/api/v2/domains/public/inboxes/moninotes-signintest-mfa`) with nothing to do with this suite's code. `utils/mailinator.ts` polls at 15s intervals to match that previously proven-out cadence. **This is why `freshNotesPage` (sign-up) is preferred over `notesPage` (sign-in) wherever a test doesn't specifically need the fixed account** - sign-up needs no email round-trip at all.
 
 **The notes list is virtualized, and a note's title can appear twice in the DOM.** `[data-testid="virtuoso-item-list"]` only renders rows currently in view, and a bare `page.getByText(title)` for a note's title also matches that same title rendered on its own open editor tab - both cause strict-mode violations or false negatives. `NotesListPage.noteInList()` scopes to the virtuoso container specifically; use it instead of matching by text directly. Likewise `NoteEditorPage`'s title field can have more than one match if a previous tab is still mounted off-screen - `titleInput` takes `.last()` for this reason.
 
@@ -158,8 +131,6 @@ Current specs:
 
 ```powershell
 npm install
-npm run maestro:web            # all web flows, headless
-npm run maestro:web sign-in    # one flow by name, headless
 npm run maestro:android
 npm run maestro:android sign-up
 ```
@@ -175,9 +146,6 @@ npm run maestro:android sign-up
 │   │   ├── config.yaml    # shared appId
 │   │   ├── flows/         # *.yaml Maestro flows (appId-based)
 │   │   └── scripts/       # JS helpers (test email, email confirmation link)
-│   └── web/                # kept for now, being phased out in favor of playwright/
-│       ├── flows/         # *.yaml Maestro flows (url-based)
-│       └── scripts/       # JS helpers (test email, MFA code)
 ├── playwright/
 │   ├── pages/              # Page Object Model - one class per screen
 │   ├── components/         # reusable pieces embedded in a page (modals, menus)

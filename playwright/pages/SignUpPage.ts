@@ -3,8 +3,8 @@ import { expect } from '@playwright/test';
 
 /**
  * The /signup flow: email -> password -> confirm password -> Create account.
- * Deliberately does NOT wait on an email confirmation - mirrors
- * ../../maestro/web/flows/sign-up.yaml, which navigates straight to /notes
+ * Deliberately does NOT wait on an email confirmation - mirrors the
+ * now-removed Maestro sign-up.yaml flow, which navigated straight to /notes
  * after account creation without polling Mailinator at all. This makes
  * sign-up the preferred way to get a fresh authenticated session for smoke
  * tests: no MFA code, no shared-inbox rate limits, a brand new account every

@@ -23,7 +23,7 @@ interface AuthFixtures {
 /**
  * Extends the base Playwright test with a `notesPage` fixture that signs in
  * with the fixed Mailinator test account (see utils/env.ts) before the test
- * body runs, mirroring maestro/web/flows/sign-in.yaml so both suites exercise
+ * body runs, mirroring the now-removed Maestro sign-in.yaml flow's use of
  * the same account. Prefer this over signing up a fresh account per test
  * (Mailinator's public API has rate limits - see utils/mailinator.ts).
  */
