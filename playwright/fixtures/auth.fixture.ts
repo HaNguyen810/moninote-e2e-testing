@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { SignUpPage } from '../pages/SignUpPage';
 import { NotesListPage } from '../pages/NotesListPage';
 import { EnterprisePage } from '../pages/EnterprisePage';
+import { AdminConsolePage } from '../pages/AdminConsolePage';
 import { SIGN_IN_ACCOUNT, SIGN_UP_PASSWORD, generateSignUpEmail } from '../utils/env';
 import { snapshotInboxIds, waitForVerificationCode } from '../utils/mailinator';
 
@@ -18,6 +19,13 @@ interface AuthFixtures {
    * needs the fixed account's persistent data (e.g. enterprise membership).
    */
   freshNotesPage: NotesListPage;
+  /**
+   * TODO: structure-only, not wired up yet. Pending admin credentials
+   * (see ADMIN_ACCOUNT in utils/env.ts) and a first look at how admin
+   * sign-in actually works - may not be the same /login flow as a regular
+   * account. See AdminConsolePage.ts / tests/admin/admin-console.spec.ts.
+   */
+  adminConsolePage: AdminConsolePage;
 }
 
 /**
@@ -62,6 +70,15 @@ export const test = base.extend<AuthFixtures>({
     await notesList.waitUntilLoaded();
 
     await use(notesList);
+  },
+
+  adminConsolePage: async ({ page }, use) => {
+    void page;
+    void use;
+    throw new Error(
+      'TODO: not yet implemented - fill in ADMIN_ACCOUNT (utils/env.ts) and the ' +
+        'admin sign-in flow once credentials are available',
+    );
   },
 });
 

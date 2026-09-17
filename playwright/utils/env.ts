@@ -12,6 +12,14 @@ export const SIGN_IN_ACCOUNT = {
   password: 'TestPass123!',
 };
 
+// TODO: fill in once admin credentials are provided (see AdminConsolePage.ts /
+// tests/admin/admin-console.spec.ts, currently structure-only pending both
+// credentials and a first look at the actual console UI).
+export const ADMIN_ACCOUNT = {
+  email: '',
+  password: '',
+};
+
 /** Password used for freshly generated sign-up accounts. */
 export const SIGN_UP_PASSWORD = 'Test@123';
 
