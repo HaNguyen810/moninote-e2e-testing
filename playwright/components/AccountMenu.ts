@@ -43,4 +43,15 @@ export class AccountMenu {
     await this.open();
     await this.page.getByText('Enterprise', { exact: true }).click();
   }
+
+  async openSettingsMenu(): Promise<void> {
+    await this.open();
+    await this.page.locator('[data-test-id="menu-button-settings"]').click();
+  }
+
+  /** Opens the "Select a plan" pricing modal directly (see PlanSelectionModal). */
+  async openUpgradeMenu(): Promise<void> {
+    await this.open();
+    await this.page.locator('[data-test-id="menu-button-upgrade"]').click();
+  }
 }
