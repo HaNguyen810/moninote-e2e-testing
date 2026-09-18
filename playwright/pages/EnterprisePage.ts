@@ -4,8 +4,8 @@ import { NotesListPage } from './NotesListPage';
 import { AccountMenu } from '../components/AccountMenu';
 
 /**
- * The profile-menu "Enterprise" modal (list of enterprises the account
- * belongs to) and the switch into an enterprise's own Workspace notes.
+ * Modal "Enterprise" trong profile menu (list cac enterprise ma account
+ * dang thuoc ve) va chuyen sang Workspace notes rieng cua 1 enterprise.
  */
 export class EnterprisePage {
   private readonly accountMenu: AccountMenu;
@@ -19,18 +19,18 @@ export class EnterprisePage {
     await expect(this.page.getByRole('heading', { name: 'Enterprise' })).toBeVisible();
   }
 
-  /** Clicks an enterprise by (partial) name and lands in its Admin console. */
+  /** Click vao 1 enterprise theo ten (co the la 1 phan) va vao Admin console cua no. */
   async openEnterprise(namePattern: string | RegExp): Promise<void> {
     await this.openEnterpriseList();
     await this.page.getByText(namePattern).click();
   }
 
   /**
-   * From the Enterprise Admin console, navigates to Workspace > My Workspace,
-   * which opens that enterprise's own /notes editor. App lock (PIN + duress
-   * passphrase) may gate this the first time - see NoteEditorPage/App lock
-   * handling in tests that need it; this page object does not handle that
-   * modal itself since it's a one-time setup step, not part of navigation.
+   * Tu Enterprise Admin console, di toi Workspace > My Workspace, mo editor
+   * /notes rieng cua enterprise do. App lock (PIN + duress passphrase) co
+   * the gate cai nay lan dau - xem cach test can xu ly App lock/NoteEditorPage;
+   * page object nay khong tu xu ly modal do vi no chi la buoc setup 1 lan,
+   * khong thuoc ve navigate.
    */
   async openMyWorkspace(): Promise<NotesListPage> {
     await this.page.getByRole('link', { name: 'Workspace' }).click();

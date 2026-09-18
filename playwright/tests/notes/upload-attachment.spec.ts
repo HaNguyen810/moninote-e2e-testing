@@ -2,27 +2,27 @@ import path from 'node:path';
 import { test, expect } from '../../fixtures/auth.fixture';
 
 /**
- * Regression suite for the "upload image/file into a note" flow, covering the
- * PNG/GIF/JPEG/PDF x personal/enterprise matrix run manually on 2026-09-15
- * (boss's ask, prompted by an afternoon spot-check where some images failed
- * to decrypt after a backend "mio" change). Manual result at the time: all
- * *valid* files passed on both Personal and Enterprise workspaces; only a
- * deliberately malformed JPEG reproduced a failure, and it crashed the whole
- * app instead of failing the single block gracefully - see
+ * Regression suite cho flow "upload anh/file vao note", cover ma tran
+ * PNG/GIF/JPEG/PDF x personal/enterprise da chay manual ngay 2026-09-15
+ * (boss yeu cau, do 1 lan spot-check buoi chieu phat hien vai anh decrypt
+ * loi sau khi backend doi "mio"). Ket qua manual luc do: tat ca file *hop
+ * le* deu pass tren ca 2 workspace Personal va Enterprise; chi 1 file JPEG
+ * co tinh lam malformed moi reproduce duoc loi, va no lam crash ca app thay
+ * vi fail nhe nhang chi rieng block do - xem
  * NoteEditorPage.hasCrashedToErrorScreen().
  *
- * Uses `notesPage` (the fixed paid-plan account), NOT `freshNotesPage`.
- * Confirmed 2026-09-16: a fresh sign-up always lands on the Free plan,
- * which blocks all image/file storage outright ("Storage is not available
- * on this plan" paywall, the same gate as "Set expiry" - see
- * plan-gating.spec.ts) - so freshNotesPage can never exercise this flow at
- * all, not even to reproduce a failure.
+ * Dung `notesPage` (account paid-plan co dinh), KHONG dung `freshNotesPage`.
+ * Confirm 2026-09-16: sign-up moi luon vao Free plan, chan het viec luu
+ * anh/file ("Storage is not available on this plan" paywall, cung gate voi
+ * "Set expiry" - xem plan-gating.spec.ts) - nen freshNotesPage khong bao
+ * gio chay duoc flow nay, ke ca de reproduce loi.
  */
 
-// __dirname doesn't exist in ESM (this package is "type": "module") - use
-// import.meta.dirname instead (Node 20.11+/21.2+). Confirmed 2026-09-16:
-// this crashed the whole file at import time with "__dirname is not
-// defined in ES module scope", so none of its tests ever actually ran.
+// __dirname khong ton tai trong ESM (package nay la "type": "module") -
+// dung import.meta.dirname thay the (Node 20.11+/21.2+). Confirm
+// 2026-09-16: truoc do ca file bi crash ngay luc import voi loi "__dirname
+// is not defined in ES module scope", nen chua test nao trong file nay
+// tung chay duoc.
 const FIXTURES = path.join(import.meta.dirname, '..', '..', 'fixtures', 'files');
 
 for (const [label, file] of [
@@ -41,9 +41,9 @@ for (const [label, file] of [
     await expect(editor.imageBlock()).toBeVisible();
     expect(await editor.hasCrashedToErrorScreen()).toBe(false);
 
-    // Reload to force a fresh decrypt from storage, not just the in-memory
-    // object URL created at paste time - this is what actually caught the
-    // "fails to decrypt after upload" class of bug during manual testing.
+    // Reload de force decrypt lai tu storage, khong chi dung object URL
+    // trong memory da tao luc paste - day chinh la cai bat duoc class bug
+    // "decrypt loi sau khi upload" trong lan test manual.
     await page.reload();
     await expect(editor.imageBlock()).toBeVisible();
   });
@@ -65,12 +65,12 @@ test('a malformed JPEG fails the upload without crashing the whole app', async (
   await editor.setTitle('QE automation - malformed JPEG');
   await editor.pasteFile(path.join(FIXTURES, 'malformed.jpg'));
 
-  // Reproduces the manual finding from 2026-09-15: pasting a malformed/
-  // truncated JPEG currently crashes to a full-screen "Something went wrong /
-  // Failed to load the image" error, recoverable only via "Reload app" -
-  // rather than failing just that one block inline. This assertion is
-  // intentionally written to describe the DESIRED behavior (graceful
-  // failure) and is expected to fail until that's fixed; flip the assertion
-  // (or delete this test) once the app handles it gracefully.
+  // Reproduce lai finding manual tu 2026-09-15: paste 1 JPEG malformed/bi
+  // cat cut hien dang lam crash ra man hinh full-screen "Something went
+  // wrong / Failed to load the image", chi khoi phuc duoc qua "Reload app"
+  // - thay vi chi fail rieng 1 block do inline. Assertion nay co tinh viet
+  // theo hanh vi MONG MUON (fail nhe nhang) va ky vong se fail cho toi khi
+  // duoc fix; doi lai assertion (hoac xoa test nay) khi app xu ly nhe
+  // nhang duoc.
   expect(await editor.hasCrashedToErrorScreen()).toBe(false);
 });

@@ -2,9 +2,9 @@ import { test, expect } from '../../fixtures/auth.fixture';
 import { SettingsPage } from '../../pages/SettingsPage';
 
 /**
- * Settings > Subscription details, verified against a fresh Free-plan
- * account (freshNotesPage always signs up fresh, landing on Free - confirmed
- * 2026-09-15/16, same basis as plan-gating.spec.ts).
+ * Settings > Subscription details, verify tren account Free-plan moi tao
+ * (freshNotesPage luon sign-up moi, vao thang Free - confirm
+ * 2026-09-15/16, cung co so voi plan-gating.spec.ts).
  */
 test.describe('Settings - Subscription details', () => {
   test('shows the Free plan and its usage limits', async ({ page, freshNotesPage }) => {

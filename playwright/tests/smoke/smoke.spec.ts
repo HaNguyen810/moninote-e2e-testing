@@ -1,15 +1,15 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 
 /**
- * Fast, broad happy-path checks for the web app - "does the critical path
- * still basically work", not deep regression coverage (that belongs in
- * feature-specific specs, e.g. tests/notes/upload-attachment.spec.ts).
+ * Cac check happy-path nhanh, dien rong cho web app - "duong critical van
+ * chay duoc ve co ban" thoi, khong phai regression coverage sau (cai do
+ * thuoc ve spec rieng tung feature, vd tests/notes/upload-attachment.spec.ts).
  *
- * Uses the `freshNotesPage` fixture (sign-up, not sign-in) everywhere
- * possible: no MFA code to wait for and no shared-inbox rate limiting, so
- * this suite stays fast and doesn't depend on Mailinator being healthy -
- * see utils/mailinator.ts and the README's "Known issues" section for why
- * that matters here specifically.
+ * Dung fixture `freshNotesPage` (sign-up, khong phai sign-in) o moi cho co
+ * the: khong phai cho code MFA va khong bi rate limit inbox dung chung, nen
+ * suite nay chay nhanh va khong phu thuoc Mailinator co healthy hay khong -
+ * xem utils/mailinator.ts va section "Known issues" trong README de biet ly
+ * do cai nay quan trong o day.
  */
 
 test.describe('Smoke: web', () => {
@@ -38,10 +38,10 @@ test.describe('Smoke: web', () => {
     const editor = await freshNotesPage.createNote();
     await editor.setTitle('Findable Smoke Note');
 
-    // No navigation needed - the note list and editor are two panels of the
-    // same /notes view. An earlier version of this test called
-    // freshNotesPage.goto() here, which is a full page reload and wiped the
-    // just-set title before it had synced (confirmed 2026-09-15).
+    // Khong can navigate - note list va editor la 2 panel cua cung 1 view
+    // /notes. Ban truoc cua test nay co goi freshNotesPage.goto() o day, la
+    // full page reload va xoa mat title vua set truoc khi no kip sync
+    // (confirm 2026-09-15).
     await freshNotesPage.search('findable smoke');
     await expect(freshNotesPage.noteInList('Findable Smoke Note')).toBeVisible();
 
@@ -54,21 +54,19 @@ test.describe('Smoke: web', () => {
     const editor = await freshNotesPage.createNote();
     await editor.setTitle('Reload-resistant note');
 
-    // Confirmed 2026-09-15: reloading immediately after setTitle() (which
-    // already blurs the field) can wipe the title entirely - both editor
-    // tabs came back completely blank. The title save appears to be
-    // debounced past the blur event, not synchronous with it. This wait is
-    // standing in for "give the app a moment to actually persist," which is
-    // also just realistic user behavior (nobody reloads 0ms after typing) -
-    // but the underlying debounce-vs-blur gap may be worth a product bug
-    // report if a real user can trigger it by refreshing quickly.
+    // Confirm 2026-09-15: reload ngay sau setTitle() (da blur field roi) co
+    // the xoa sach title - ca 2 tab editor quay lai deu trong trơn. Viec
+    // luu title co ve bi debounce sau blur event, khong sync ngay luc do.
+    // Cho nay dai dien cho "cho app 1 chut de luu that su", cung la hanh vi
+    // thuc te cua nguoi dung (khong ai reload 0ms sau khi go) - nhung
+    // khoang cach debounce-vs-blur nay co the dang bao bug san pham neu
+    // nguoi dung that trigger duoc bang cach refresh nhanh.
     await page.waitForTimeout(2_000);
     await page.reload();
     await freshNotesPage.waitUntilLoaded();
-    // waitUntilLoaded() only confirms the search box has mounted - the note
-    // list itself is populated from local storage slightly after that, so
-    // give this specific assertion more room than the default 5s (confirmed
-    // necessary 2026-09-15).
+    // waitUntilLoaded() chi confirm search box da mount - note list thuc su
+    // duoc populate tu local storage tre hon 1 chut, nen cho assertion nay
+    // nhieu thoi gian hon default 5s (confirm can thiet 2026-09-15).
     await expect(freshNotesPage.noteInList('Reload-resistant note')).toBeVisible({
       timeout: 15_000,
     });

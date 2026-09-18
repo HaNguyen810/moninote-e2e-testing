@@ -4,14 +4,14 @@ import { expect } from '@playwright/test';
 export type ExportFormat = 'pdf' | 'md' | 'md-frontmatter' | 'html' | 'txt';
 
 /**
- * The right-click context menu on a note list item. There is no visible
- * hover/ellipsis button on a list item - right-click is the only way to
- * reach these actions. Content differs by view, confirmed 2026-09-16:
- * - Notes/Favorites/Archive view: Open in new tab, PIN, Read only, Favorite,
+ * Context menu right-click tren 1 note list item. Khong co nut
+ * hover/ellipsis nao hien thi ca - right-click la cach duy nhat de vao cac
+ * action nay. Noi dung khac nhau tuy view, confirm 2026-09-16:
+ * - View Notes/Favorites/Archive: Open in new tab, PIN, Read only, Favorite,
  *   Lock, Remind me, Archive, Notebooks, Assign color, Tags, Print, Export
  *   as, Copy as, Copy link, Duplicate, Sync off, Set expiry, Move to trash
- * - Trash view: just Restore and Delete (permanent, with a confirmation
- *   dialog - "This action is IRREVERSIBLE")
+ * - View Trash: chi co Restore va Delete (permanent, co dialog confirm -
+ *   "This action is IRREVERSIBLE")
  */
 export class NoteContextMenu {
   constructor(private readonly page: Page) {}
@@ -21,10 +21,10 @@ export class NoteContextMenu {
     await expect(this.page.locator('[data-test-id="menu-container"]')).toBeVisible();
   }
 
-  // Each item carries a stable data-test-id - prefer these over text
-  // matching. "Archive" in particular also appears as sidebar nav item
-  // text, so a plain getByText('Archive') is ambiguous (confirmed
-  // 2026-09-15, strict-mode violation).
+  // Moi item co data-test-id on dinh - uu tien dung cai nay hon la match
+  // theo text. Rieng "Archive" con xuat hien trong text nav sidebar nen
+  // getByText('Archive') thuong se bi ambiguous (confirm 2026-09-15, loi
+  // strict-mode).
   private menuItem(testId: string) {
     return this.page.locator(`[data-test-id="menu-button-${testId}"]`);
   }
@@ -49,32 +49,31 @@ export class NoteContextMenu {
     await this.menuItem('duplicate').click();
   }
 
-  /** Pins the note - it moves into a "PINNED" section at the top of the list. */
+  /** Pin note - no se chuyen vao section "PINNED" tren dau list. */
   async pin(noteItem: Locator): Promise<void> {
     await this.openFor(noteItem);
     await this.menuItem('pin').click();
   }
 
   /**
-   * Toggles read-only mode. Confirmed 2026-09-16: this removes the body's
-   * contenteditable attribute entirely (swaps to a locked view) rather than
-   * just disabling it - `[contenteditable="true"]` matches 0 elements
-   * afterward.
+   * Bat/tat che do read-only. Confirm 2026-09-16: cai nay xoa han attribute
+   * contenteditable cua body (chuyen sang view khoa) chu khong phai chi
+   * disable - `[contenteditable="true"]` se match 0 element sau khi bat.
    */
   async toggleReadOnly(noteItem: Locator): Promise<void> {
     await this.openFor(noteItem);
     await this.menuItem('readonly').click();
   }
 
-  /** Only available in the Trash view - moves the note back to Notes. */
+  /** Chi co trong view Trash - dua note tro lai Notes. */
   async restore(noteItem: Locator): Promise<void> {
     await this.openFor(noteItem);
     await this.menuItem('restore').click();
   }
 
   /**
-   * Only available in the Trash view - permanently deletes the note after
-   * confirming the "This action is IRREVERSIBLE" dialog.
+   * Chi co trong view Trash - xoa vinh vien note sau khi confirm dialog
+   * "This action is IRREVERSIBLE".
    */
   async permanentlyDelete(noteItem: Locator): Promise<void> {
     await this.openFor(noteItem);
@@ -84,11 +83,10 @@ export class NoteContextMenu {
   }
 
   /**
-   * Creates a brand-new notebook and links this note to it, in one flow:
-   * right-click -> Notebooks -> Link notebooks -> Add notebook -> fill
-   * title -> Create -> select the new notebook -> Done. Confirmed
-   * 2026-09-16 - the notebook's name then appears as a badge under the
-   * note's title in the sidebar list.
+   * Tao 1 notebook moi va gan note nay vao, gop chung 1 flow:
+   * right-click -> Notebooks -> Link notebooks -> Add notebook -> dien
+   * title -> Create -> chon notebook moi tao -> Done. Confirm 2026-09-16 -
+   * ten notebook se hien thanh badge duoi title note trong sidebar list.
    */
   async linkToNewNotebook(noteItem: Locator, notebookName: string): Promise<void> {
     await this.openFor(noteItem);
@@ -105,12 +103,11 @@ export class NoteContextMenu {
   }
 
   /**
-   * Creates a brand-new color and assigns it to this note, in one flow:
-   * right-click -> Assign color -> Add color -> fill title + hex -> Create.
-   * Confirmed 2026-09-16 - creating a color auto-applies it to the note
-   * (no separate "select then Done" step, unlike notebooks) and it becomes
-   * its own navigable collection in the left sidebar, the same way
-   * Favorites/Archive/Trash are.
+   * Tao 1 color moi va gan cho note nay, gop chung 1 flow:
+   * right-click -> Assign color -> Add color -> dien title + hex -> Create.
+   * Confirm 2026-09-16 - tao color se auto-apply luon vao note (khong can
+   * buoc "chon roi Done" rieng nhu notebook) va no thanh 1 collection dieu
+   * huong duoc rieng trong sidebar trai, giong nhu Favorites/Archive/Trash.
    */
   async assignNewColor(noteItem: Locator, colorName: string, hex: string): Promise<void> {
     await this.openFor(noteItem);
@@ -124,11 +121,10 @@ export class NoteContextMenu {
   }
 
   /**
-   * Copies a `nn://note/<id>` deep link to the OS clipboard - no dialog or
-   * visible confirmation, confirmed 2026-09-16 by reading
-   * navigator.clipboard.readText() afterward. Requires the
-   * clipboard-read/clipboard-write permissions granted in
-   * playwright.config.ts.
+   * Copy deep link `nn://note/<id>` vao clipboard cua OS - khong co dialog
+   * hay confirm hien thi gi ca, confirm 2026-09-16 bang cach doc
+   * navigator.clipboard.readText() sau do. Can quyen
+   * clipboard-read/clipboard-write da cap trong playwright.config.ts.
    */
   async copyLink(noteItem: Locator): Promise<void> {
     await this.openFor(noteItem);
@@ -136,14 +132,13 @@ export class NoteContextMenu {
   }
 
   /**
-   * Adds a reminder to the note. Requires the "notifications" permission
-   * (see playwright.config.ts) - without it, the dialog's Add button just
-   * re-shows a "Please grant notifications permission" message and does
-   * nothing. `date` must be DD-MM-YYYY and in the future - the dialog
-   * rejects a time earlier than "now", and its own default date/time value
-   * is only a snapshot from when it opened, so pass an explicit date
-   * rather than relying on that default (see utils/env.ts,
-   * tomorrowDateDDMMYYYY()).
+   * Them 1 reminder cho note. Can quyen "notifications" (xem
+   * playwright.config.ts) - neu khong co, nut Add cua dialog chi hien lai
+   * thong bao "Please grant notifications permission" va khong lam gi ca.
+   * `date` phai o dang DD-MM-YYYY va la tuong lai - dialog se reject neu
+   * gio som hon "hien tai", va gia tri date/time mac dinh cua dialog chi la
+   * snapshot luc no mo, nen phai truyen date ro rang thay vi dua vao mac
+   * dinh (xem utils/env.ts, tomorrowDateDDMMYYYY()).
    */
   async addReminder(noteItem: Locator, date: string, time: string): Promise<void> {
     await this.openFor(noteItem);
@@ -156,10 +151,10 @@ export class NoteContextMenu {
   }
 
   /**
-   * "Set expiry" is Pro-plan-gated - on a Free plan (which a fresh
-   * signup always lands on) this opens an upgrade paywall instead of an
-   * expiry-date dialog, confirmed 2026-09-16. This method just opens
-   * whatever that click produces; the caller asserts which one it got.
+   * "Set expiry" bi gate boi Pro plan - tren Free plan (account moi
+   * signup luon rot vao day) click vao se ra paywall upgrade thay vi
+   * dialog set expiry-date, confirm 2026-09-16. Method nay chi mo bat ky
+   * cai gi click nay tao ra; noi goi tu assert xem no nhan duoc cai nao.
    */
   async setExpiry(noteItem: Locator): Promise<void> {
     await this.openFor(noteItem);
@@ -167,19 +162,19 @@ export class NoteContextMenu {
   }
 
   /**
-   * Exports the note and returns the resulting Download. Confirmed
-   * 2026-09-16: this is a genuine browser file download (Playwright's
-   * `download` event fires), not a native print/save dialog - its content
-   * can be read directly via `download.createReadStream()`. `format` maps
-   * to the export submenu's own test ids: pdf, md, md-frontmatter, html, txt.
+   * Export note va tra ve Download tuong ung. Confirm 2026-09-16: day la
+   * download file that cua browser (event `download` cua Playwright co
+   * fire), khong phai dialog native print/save - co the doc content truc
+   * tiep qua `download.createReadStream()`. `format` map voi test id rieng
+   * cua submenu export: pdf, md, md-frontmatter, html, txt.
    */
   async exportAs(noteItem: Locator, format: ExportFormat): Promise<Download> {
     await this.openFor(noteItem);
     await this.menuItem('export').click();
 
-    // PDF generation in particular can take longer than the config's 15s
-    // actionTimeout default (client-side rendering) - give this specific
-    // wait more room rather than raising the global default.
+    // Rieng PDF generate co the lau hon actionTimeout mac dinh 15s cua
+    // config (render phia client) - cho rieng cho nay lau hon thay vi
+    // tang mac dinh chung toan bo.
     const [download] = await Promise.all([
       this.page.waitForEvent('download', { timeout: 30_000 }),
       this.menuItem(format).click(),
@@ -188,13 +183,25 @@ export class NoteContextMenu {
   }
 
   /**
-   * Locking a note the first time on an account prompts to set up a vault
-   * (a separate password from the account password/app-lock PIN, used to
-   * encrypt locked notes on this device) - confirmed 2026-09-16. This
-   * method only opens that prompt; it doesn't complete vault creation.
+   * Khoa note. Lan dau tien tren 1 account, cai nay se hoi tao vault -
+   * 1 password rieng, khac voi password account/PIN app-lock, dung de ma
+   * hoa cac note bi khoa tren thiet bi nay (`password-dialog`, field
+   * `#password`/`#confirmPassword`). Confirm 2026-09-17: sau khi submit,
+   * note se hien view khoa ngay lap tuc; dung chung voi
+   * NoteEditorPage.unlockNote(vaultPassword) de doc lai duoc content.
    */
-  async lock(noteItem: Locator): Promise<void> {
+  async lock(noteItem: Locator, vaultPassword: string): Promise<void> {
     await this.openFor(noteItem);
     await this.menuItem('lock').click();
+
+    const dialog = this.page.locator('[data-test-id="password-dialog"]');
+    await dialog.locator('#password').fill(vaultPassword);
+    await dialog.locator('#confirmPassword').fill(vaultPassword);
+    await dialog.locator('button[type="submit"]').click();
+    // Tao vault la async (ma hoa luc submit) - cho dialog thuc su dong
+    // thay vi return ngay, neu khong noi goi check
+    // NoteEditorPage.isLocked() ngay sau co the bat trung luc dang submit
+    // (confirm 2026-09-17: dialog van con hien voi spinner dang load).
+    await expect(dialog).toBeHidden({ timeout: 10_000 });
   }
 }

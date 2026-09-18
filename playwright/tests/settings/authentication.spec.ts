@@ -1,7 +1,7 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 import { SettingsPage } from '../../pages/SettingsPage';
 
-/** Settings > Authentication, verified against a fresh Free-plan account. */
+/** Settings > Authentication, verify tren account Free-plan moi tao. */
 test.describe('Settings - Authentication', () => {
   test('Change password opens a dialog with current/new/confirm fields and password requirements', async ({
     page,

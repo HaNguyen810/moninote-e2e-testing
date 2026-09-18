@@ -1,10 +1,10 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 
 /**
- * More note management actions, split from note-management.spec.ts to keep
- * that file to the most common Favorite/Archive/Trash/edit-title flows.
- * Covers: Pin, Read only, and the Trash view's own Restore/Delete actions
- * (distinct from the Notes-view context menu - see NoteContextMenu).
+ * Cac action quan ly note khac, tach ra tu note-management.spec.ts de file
+ * do chi giu lai cac flow pho bien nhat Favorite/Archive/Trash/edit-title.
+ * Cover: Pin, Read only, va cac action Restore/Delete rieng cua view Trash
+ * (khac voi context menu cua view Notes - xem NoteContextMenu).
  */
 
 test.describe('Pin and read-only', () => {

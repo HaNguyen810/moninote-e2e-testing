@@ -1,9 +1,9 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 
 /**
- * Note content editing beyond the title: body text, tags, and duplication.
- * See NoteEditorPage for the underlying locators/behavior notes (e.g. the
- * contenteditable body placeholder, the "Add a tag" field).
+ * Edit noi dung note ngoai title: body text, tag, va duplicate. Xem
+ * NoteEditorPage de biet locator/hanh vi ben duoi (vd placeholder body
+ * contenteditable, field "Add a tag").
  */
 
 test.describe('Note content', () => {
@@ -15,9 +15,9 @@ test.describe('Note content', () => {
     await editor.setTitle('Body persistence check');
     await editor.typeInBody('This body text should survive a reload.');
 
-    // Same debounce-vs-reload gap documented for the title in
-    // tests/smoke/smoke.spec.ts - give the body a moment to actually save
-    // before reloading, rather than assuming blur/typing alone is enough.
+    // Cung khoang debounce-vs-reload nhu da ghi cho title trong
+    // tests/smoke/smoke.spec.ts - cho body 1 chut de luu that su truoc khi
+    // reload, thay vi gia dinh chi blur/typing la du.
     await page.waitForTimeout(2_000);
     await page.reload();
     await freshNotesPage.waitUntilLoaded();
@@ -45,7 +45,7 @@ test.describe('Note content', () => {
 
     await freshNotesPage.contextMenu.duplicate(freshNotesPage.noteInList('Note to duplicate'));
 
-    // Confirmed 2026-09-15: duplicate appends " (Copy)" to the title.
+    // Confirm 2026-09-15: duplicate them " (Copy)" vao cuoi title.
     const copy = freshNotesPage.noteInList('Note to duplicate (Copy)');
     await expect(copy).toBeVisible();
     await expect(freshNotesPage.noteInList('Note to duplicate')).toBeVisible();

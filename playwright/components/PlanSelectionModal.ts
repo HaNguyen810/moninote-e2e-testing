@@ -2,9 +2,9 @@ import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 /**
- * The "Select a plan" pricing modal - reachable from AccountMenu.openUpgradeMenu(),
- * SettingsPage.openUpgradeFromSubscription(), or any plan-gated paywall's
- * "Compare all plans" link (all three render the same modal, confirmed 2026-09-17).
+ * Modal pricing "Select a plan" - vao duoc tu AccountMenu.openUpgradeMenu(),
+ * SettingsPage.openUpgradeFromSubscription(), hoac link "Compare all plans"
+ * cua bat ky paywall plan-gated nao (ca 3 deu render cung 1 modal, confirm 2026-09-17).
  */
 export class PlanSelectionModal {
   constructor(private readonly page: Page) {}
@@ -18,20 +18,19 @@ export class PlanSelectionModal {
   }
 
   /**
-   * "Start your free trial" CTAs, one per paid-plan card. Should be exactly
-   * 2 (Essential, Pro) - Yearly billing shows exactly that, but Monthly
-   * billing renders 3: a genuine duplicate "Essential" card at the wrong
-   * price ($24/month alongside the correct $1.99/month), confirmed via
-   * direct inspection (screenshot + innerText dump) 2026-09-17, not a
-   * tooling artifact. See tests/settings/plan-selection.spec.ts.
+   * Cac nut CTA "Start your free trial", moi paid-plan card 1 cai. Dung ra
+   * phai la 2 (Essential, Pro) - Yearly billing dung hien 2, nhung Monthly
+   * billing lai render 3: bi trung 1 card "Essential" that su voi gia sai
+   * ($24/month ben canh gia dung $1.99/month), confirm qua inspect truc
+   * tiep (screenshot + innerText dump) 2026-09-17, khong phai loi do tool.
+   * Xem tests/settings/plan-selection.spec.ts.
    *
-   * Uses getByText, not getByRole('button', ...): these are real <button>
-   * elements, but getByRole consistently finds 0 matches for them (confirmed
-   * 2026-09-17 via a direct evaluate()-vs-locator comparison - the buttons
-   * were present and stable in the DOM the whole time, this isn't a timing
-   * issue). Likely an accessible-name mismatch, e.g. an icon contributing
-   * to the computed name - getByText matches the same elements reliably.
-   * Same root cause affects openCompareTable() below.
+   * Dung getByText, khong dung getByRole('button', ...): day la <button>
+   * that, nhung getByRole luon tim ra 0 match (confirm 2026-09-17 qua so
+   * sanh truc tiep evaluate() voi locator - button van co san va on dinh
+   * trong DOM suot, khong phai do timing). Co le do accessible-name bi lech,
+   * vd icon anh huong ten tinh toan - getByText thi match dung on dinh.
+   * Cung nguyen nhan goc anh huong openCompareTable() ben duoi.
    */
   get paidPlanTrialButtons() {
     return this.page.getByText('Start your free trial');

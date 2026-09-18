@@ -4,7 +4,7 @@ import { InsertBlockMenu } from '../components/InsertBlockMenu';
 import { FormattingToolbar } from '../components/FormattingToolbar';
 import { pasteFileIntoFocusedElement } from '../utils/pasteFile';
 
-/** The right-hand note editor pane: title, tags, and the rich-text body. */
+/** Pane editor note ben phai: title, tag, va body rich-text. */
 export class NoteEditorPage {
   readonly insertMenu: InsertBlockMenu;
   readonly toolbar: FormattingToolbar;
@@ -15,11 +15,11 @@ export class NoteEditorPage {
   }
 
   private get titleInput() {
-    // The editor supports multiple open tabs, and a previous note's title
-    // textarea can stay mounted (off-screen) after switching tabs - so more
-    // than one element can match this placeholder at once. The most
-    // recently opened tab's title field is last in DOM order; confirmed
-    // 2026-09-15 via a strict-mode violation surfaced by createNote().
+    // Editor cho phep mo nhieu tab, va textarea title cua note truoc van co
+    // the con mount (o ngoai man hinh) sau khi chuyen tab - nen co the co
+    // hon 1 element match placeholder nay cung luc. Field title cua tab moi
+    // mo gan nhat se nam cuoi cung theo thu tu DOM; confirm 2026-09-15 qua
+    // loi strict-mode phat hien trong createNote().
     return this.page.getByPlaceholder('Note title').last();
   }
 
@@ -27,7 +27,7 @@ export class NoteEditorPage {
     return this.page.getByText('Start writing your note...').or(this.bodyWithContent);
   }
 
-  /** Body locator once it already holds content (placeholder text is gone). */
+  /** Locator cua body khi da co content (placeholder text da bien mat). */
   private get bodyWithContent() {
     return this.page.locator('[contenteditable="true"]').last();
   }
@@ -37,8 +37,8 @@ export class NoteEditorPage {
   }
 
   private get tagInput() {
-    // Same multi-tab mounting issue as titleInput - a previous tab's tag
-    // field can still be in the DOM (confirmed 2026-09-15).
+    // Bi loi mount multi-tab giong titleInput - field tag cua tab truoc van
+    // co the con trong DOM (confirm 2026-09-15).
     return this.page.getByPlaceholder('Add a tag').last();
   }
 
@@ -48,9 +48,9 @@ export class NoteEditorPage {
 
   async setTitle(title: string): Promise<void> {
     await this.titleInput.fill(title);
-    // The sidebar list title appears to update on blur/debounce rather than
-    // on every keystroke - blur explicitly so callers don't need to know
-    // that and can immediately assert against the list (e.g. noteInList()).
+    // Title trong sidebar list hinh nhu update luc blur/debounce chu khong
+    // phai moi lan go phim - blur ro rang de noi goi khong can biet dieu
+    // do va co the assert ngay vao list (vd noteInList()).
     await this.titleInput.blur();
   }
 
@@ -59,38 +59,37 @@ export class NoteEditorPage {
   }
 
   /**
-   * Types plain text into the body. Uses the keyboard rather than `.fill()`
-   * because the body is a contenteditable rich-text block, not a plain
-   * input/textarea - `.fill()` doesn't reliably target contenteditable
-   * elements the way it does form fields.
+   * Go plain text vao body. Dung keyboard thay vi `.fill()` vi body la
+   * block rich-text contenteditable, khong phai input/textarea thuong -
+   * `.fill()` khong target on dinh vao contenteditable nhu voi form field.
    */
   async typeInBody(text: string): Promise<void> {
     await this.focusBody();
     await this.page.keyboard.type(text);
   }
 
-  /** The body's current plain-text content, for asserting edits persisted. */
+  /** Noi dung plain-text hien tai cua body, dung de assert edit da luu. */
   async bodyText(): Promise<string> {
     return this.bodyWithContent.innerText();
   }
 
-  /** The body's current HTML, for asserting formatting (bold/italic/checklist/etc). */
+  /** HTML hien tai cua body, dung de assert format (bold/italic/checklist/...). */
   async bodyHtml(): Promise<string> {
     return this.bodyWithContent.innerHTML();
   }
 
-  /** Selects all text currently in the body (assumes the body is already focused). */
+  /** Select toan bo text dang co trong body (gia dinh body da duoc focus). */
   async selectAllInBody(): Promise<void> {
     await this.focusBody();
     await this.page.keyboard.press('Meta+a');
   }
 
   /**
-   * A checklist item's <li>, by position. The checkbox itself has no
-   * accessible role or form control - it's a CSS pseudo-element roughly
-   * 16px to the left of the item's text, not inside the <li>'s own
-   * bounding box (confirmed 2026-09-16). Use toggleChecklistItem() to
-   * click it rather than clicking this locator directly.
+   * `<li>` cua 1 checklist item, theo vi tri. Checkbox tu no khong co role
+   * accessible hay form control gi ca - no la 1 pseudo-element CSS nam
+   * khoang 16px ben trai text cua item, khong nam trong bounding box cua
+   * `<li>` (confirm 2026-09-16). Dung toggleChecklistItem() de click vao
+   * thay vi click truc tiep locator nay.
    */
   checklistItem(index = 0) {
     return this.bodyWithContent.locator('ul.simple-checklist > li').nth(index);
@@ -109,8 +108,8 @@ export class NoteEditorPage {
   }
 
   /**
-   * Adds a tag via the "Add a tag" field (confirmed 2026-09-15: typing a
-   * name and pressing Enter adds it - there's no separate "confirm" button).
+   * Them tag qua field "Add a tag" (confirm 2026-09-15: go ten roi bam
+   * Enter la them duoc - khong co nut "confirm" rieng nao ca).
    */
   async addTag(tag: string): Promise<void> {
     await this.tagInput.click();
@@ -119,40 +118,39 @@ export class NoteEditorPage {
   }
 
   /**
-   * A tag chip attached to the note, by name. Scoped to #editorContainer -
-   * a bare page-wide getByText(tag) also matches the same tag rendered in
-   * the sidebar list item's preview text, causing a strict-mode violation
-   * (confirmed 2026-09-15).
+   * Chip cua 1 tag gan vao note, theo ten. Scope vao #editorContainer - vi
+   * getByText(tag) tren ca page se match luon tag do trong preview text
+   * cua sidebar list item, gay loi strict-mode (confirm 2026-09-15).
    */
   tagChip(tag: string) {
     return this.page.locator('#editorContainer').getByText(tag, { exact: true });
   }
 
   /**
-   * Pastes a file (image or attachment) into the note body via a synthetic
-   * clipboard paste event - see utils/pasteFile.ts for why this is used
-   * instead of the normal Playwright file-upload flow.
+   * Paste 1 file (anh hoac attachment) vao body note qua 1 clipboard paste
+   * event gia lap - xem utils/pasteFile.ts de biet ly do dung cach nay
+   * thay vi flow upload file binh thuong cua Playwright.
    */
   async pasteFile(filePath: string): Promise<void> {
     await this.focusBody();
     await pasteFileIntoFocusedElement(this.body, filePath);
   }
 
-  /** Image block inserted into the body, located by its position among image blocks. */
+  /** Image block da insert vao body, tim theo vi tri trong cac image block. */
   imageBlock(index = 0) {
     return this.page.locator('img, [data-block-type="image"]').nth(index);
   }
 
-  /** Attachment (non-image file) chip inserted into the body, by its file name. */
+  /** Chip attachment (file khong phai anh) da insert vao body, theo ten file. */
   attachmentChip(fileName: string) {
     return this.page.getByText(fileName, { exact: false });
   }
 
   /**
-   * True if pasting/uploading crashed the whole app to the full-screen
-   * "Something went wrong" error, rather than failing gracefully inline.
-   * Reproduced manually on 2026-09-15 with a malformed/truncated JPEG -
-   * see fixtures/files/malformed.jpg and tests/notes/upload-attachment.spec.ts.
+   * True neu paste/upload lam crash ca app ra man hinh loi full-screen
+   * "Something went wrong", thay vi fail nhe nhang tai cho. Reproduce
+   * manual ngay 2026-09-15 voi 1 file JPEG malformed/bi cat cut - xem
+   * fixtures/files/malformed.jpg va tests/notes/upload-attachment.spec.ts.
    */
   async hasCrashedToErrorScreen(): Promise<boolean> {
     return this.appErrorScreen.isVisible({ timeout: 3_000 }).catch(() => false);
@@ -163,12 +161,38 @@ export class NoteEditorPage {
   }
 
   /**
-   * True if the body is currently editable. Toggling read-only via
-   * NoteContextMenu.toggleReadOnly() removes the contenteditable attribute
-   * entirely rather than just disabling it (confirmed 2026-09-16) - so this
-   * checks for the element's absence, not a disabled state.
+   * True neu body dang editable duoc. Bat read-only qua
+   * NoteContextMenu.toggleReadOnly() xoa han attribute contenteditable chu
+   * khong phai chi disable (confirm 2026-09-16) - nen cai nay check element
+   * co ton tai hay khong, khong phai check trang thai disabled.
    */
   async isBodyEditable(): Promise<boolean> {
     return (await this.page.locator('[contenteditable="true"]').count()) > 0;
+  }
+
+  /**
+   * True neu note dang mo hien placeholder khoa ("Please enter the
+   * password to unlock this note") thay vi content that. Confirm 2026-09-17.
+   */
+  async isLocked(): Promise<boolean> {
+    return this.page
+      .getByText('Please enter the password to unlock this note')
+      .isVisible({ timeout: 3_000 })
+      .catch(() => false);
+  }
+
+  /**
+   * Mo khoa 1 note dang bi khoa. Confirm 2026-09-17 dau tien qua browser
+   * that (khong headless), roi reproduce lai trong Playwright headless: co
+   * that 1 input password o day ("Enter your access code."), rat de bo lo
+   * vi no render khong khac gi ve mat hinh thuc cho toi khi duoc focus -
+   * cac lan thu mo khoa truoc do that bai chi vi field nay chua duoc dien
+   * truoc khi click "Open note", khong phai do bug that su cua san pham.
+   * `.last()` vi ly do bi mount trung multi-tab nhu thuong le.
+   */
+  async unlockNote(vaultPassword: string): Promise<void> {
+    const input = this.page.getByPlaceholder('Enter your access code.').last();
+    await input.fill(vaultPassword);
+    await this.page.getByText('Open note', { exact: true }).last().click();
   }
 }

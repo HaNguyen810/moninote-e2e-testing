@@ -3,10 +3,9 @@ import { expect } from '@playwright/test';
 import { MfaModal } from '../components/MfaModal';
 
 /**
- * The /login flow: email -> 2FA code -> account password.
- * Order confirmed against a fresh account by the now-removed Maestro
- * sign-in.yaml flow - password is asked for *after* the code is accepted,
- * not before.
+ * Flow /login: email -> code 2FA -> password account.
+ * Thu tu confirm tren account moi qua flow sign-in.yaml cua Maestro (da
+ * xoa) - password bi hoi *sau* khi code duoc accept, khong phai truoc.
  */
 export class LoginPage {
   readonly mfa: MfaModal;
@@ -15,11 +14,11 @@ export class LoginPage {
     this.mfa = new MfaModal(page);
   }
 
-  // "Enter email address" / "Enter account password" render as a floating
-  // label (the accessible name), not a real HTML `placeholder` attribute -
-  // getByPlaceholder() matches 0 elements here even though the same text is
-  // visible on screen. Confirmed by direct DOM inspection 2026-09-15;
-  // getByRole('textbox', { name }) matches the accessible name correctly.
+  // "Enter email address" / "Enter account password" render nhu floating
+  // label (accessible name), khong phai attribute HTML `placeholder` that -
+  // getByPlaceholder() se match 0 element o day du text van hien tren man
+  // hinh. Confirm boi inspect DOM truc tiep 2026-09-15; getByRole('textbox',
+  // { name }) moi match dung accessible name.
   private get emailInput() {
     return this.page.getByRole('textbox', { name: /enter email address/i });
   }
@@ -38,11 +37,11 @@ export class LoginPage {
 
   async goto(): Promise<void> {
     await this.page.goto('/login');
-    // Cold load goes through "Starting up the engines" -> multi-tab
-    // SharedWorker/IndexedDB provider election ("Decrypting your notes")
-    // before the login form mounts - observed to take ~10s on 2026-09-15
-    // but up to ~40s on 2026-09-16, so wait generously for the actual form
-    // rather than a fixed sleep or a tight timeout.
+    // Cold load se qua "Starting up the engines" -> bau chon
+    // SharedWorker/IndexedDB multi-tab ("Decrypting your notes") truoc khi
+    // form login mount xong - quan sat mat ~10s ngay 2026-09-15 nhung co
+    // luc len toi ~40s ngay 2026-09-16, nen cho rong rai cho form that thay
+    // vi sleep co dinh hay timeout gap.
     await expect(this.emailInput).toBeVisible({ timeout: 45_000 });
   }
 
@@ -58,10 +57,9 @@ export class LoginPage {
   }
 
   /**
-   * Full sign-in: email -> code (resolved by the caller, e.g. via
-   * utils/mailinator.ts) -> password. Skips the plan picker if it appears,
-   * the same way the Maestro flow does defensively for an account that
-   * should already have a plan.
+   * Sign-in full: email -> code (noi goi tu resolve, vd qua
+   * utils/mailinator.ts) -> password. Bo qua man chon plan neu no hien ra,
+   * giong cach flow Maestro lam de phong cho 1 account dang le da co plan roi.
    */
   async signIn(email: string, password: string, code: string): Promise<void> {
     await this.goto();

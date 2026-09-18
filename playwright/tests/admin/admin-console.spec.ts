@@ -1,19 +1,18 @@
 import { test } from '../../fixtures/auth.fixture';
 
 /**
- * Enterprise Admin console - structure-only for now.
+ * Enterprise Admin console - hien tai chi co structure, chua co gi that.
  *
- * Blocked on two things before any of this can be written for real:
- *  1. Admin credentials (ADMIN_ACCOUNT in utils/env.ts is currently empty).
- *  2. An actual look at the console UI - EnterprisePage.openEnterprise()
- *     confirms you land "in its Admin console" and openMyWorkspace() confirms
- *     a Workspace > My Workspace link exists, but nothing else about the
- *     console (what sections exist, member/role management, billing, etc.)
- *     has been seen yet.
+ * Bi block boi 2 thu truoc khi viet duoc that:
+ *  1. Credential admin (ADMIN_ACCOUNT trong utils/env.ts hien dang rong).
+ *  2. Chua thuc su nhin qua UI console - EnterprisePage.openEnterprise()
+ *     confirm co vao duoc "Admin console" cua no va openMyWorkspace()
+ *     confirm co link Workspace > My Workspace, nhung chua thay gi khac ve
+ *     console (co section gi, quan ly member/role, billing, v.v.).
  *
- * Each test below is a placeholder for a test case, marked `fixme` so it's
- * collected but not run. Replace the body (and the TC description if it
- * turns out wrong) once the console has actually been explored.
+ * Moi test ben duoi la 1 placeholder cho 1 test case, danh dau `fixme` de no
+ * duoc collect nhung khong chay. Thay body (va sua lai mo ta TC neu sai) sau
+ * khi da explore console that su.
  */
 
 test.describe('Enterprise Admin console', () => {
@@ -28,9 +27,9 @@ test.describe('Enterprise Admin console', () => {
     void adminConsolePage;
   });
 
-  // TODO: everything below is a guess at likely admin-console scope, not a
-  // confirmed feature. Verify each one exists before un-skipping it, and
-  // delete any that don't apply.
+  // TODO: moi thu ben duoi la doan phong theo scope co the co cua
+  // admin-console, chua phai feature confirm chac chan. Verify tung cai co
+  // that truoc khi bo skip, cai nao khong ap dung thi xoa.
   test.fixme('admin can view the list of enterprise members', async ({ adminConsolePage }) => {
     void adminConsolePage;
   });

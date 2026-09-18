@@ -1,9 +1,9 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 
 /**
- * Notebooks: right-click a note -> Notebooks -> Link notebooks -> Add
- * notebook -> Create -> select it -> Done. See
- * NoteContextMenu.linkToNewNotebook() for the full flow.
+ * Notebooks: right-click note -> Notebooks -> Link notebooks -> Add
+ * notebook -> Create -> chon no -> Done. Xem
+ * NoteContextMenu.linkToNewNotebook() de biet full flow.
  */
 
 test.describe('Notebooks', () => {
@@ -16,11 +16,24 @@ test.describe('Notebooks', () => {
       'Work Notebook'
     );
 
-    // The notebook's name renders as its own badge line in the sidebar list
-    // item, under the note title - noteInList() is a generic virtuoso-list
-    // text matcher so it works here too, not just for note titles.
+    // Ten notebook render thanh 1 dong badge rieng trong sidebar list item,
+    // duoi title note - noteInList() la text matcher chung cua virtuoso-list
+    // nen dung duoc o day luon, khong chi cho title note.
     await expect(freshNotesPage.noteInList('Work Notebook')).toBeVisible();
     await expect(freshNotesPage.noteInList('Notebook candidate')).toBeVisible();
+  });
+
+  test('a linked note appears when browsing Notebooks', async ({ freshNotesPage }) => {
+    const editor = await freshNotesPage.createNote();
+    await editor.setTitle('Notebook browse candidate');
+
+    await freshNotesPage.contextMenu.linkToNewNotebook(
+      freshNotesPage.noteInList('Notebook browse candidate'),
+      'Personal Projects'
+    );
+
+    await freshNotesPage.goToNotebooks();
+    await expect(freshNotesPage.noteInList('Notebook browse candidate')).toBeVisible();
   });
 });
 
@@ -31,8 +44,8 @@ test.describe('Colors', () => {
     const editor = await freshNotesPage.createNote();
     await editor.setTitle('Color candidate');
 
-    // Unlike notebooks (create, then separately select + Done), creating a
-    // color auto-applies it to the note immediately.
+    // Khac voi notebook (tao xong roi chon rieng + Done), tao color se
+    // tu dong apply luon vao note ngay lap tuc.
     await freshNotesPage.contextMenu.assignNewColor(
       freshNotesPage.noteInList('Color candidate'),
       'Important',

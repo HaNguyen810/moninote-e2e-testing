@@ -2,14 +2,13 @@ import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 /**
- * The /signup flow: email -> password -> confirm password -> Create account.
- * Deliberately does NOT wait on an email confirmation - mirrors the
- * now-removed Maestro sign-up.yaml flow, which navigated straight to /notes
- * after account creation without polling Mailinator at all. This makes
- * sign-up the preferred way to get a fresh authenticated session for smoke
- * tests: no MFA code, no shared-inbox rate limits, a brand new account every
- * run. Use LoginPage/the fixed test account instead only when a test
- * specifically needs persistent data (e.g. enterprise membership).
+ * Flow /signup: email -> password -> confirm password -> Create account.
+ * Co tinh KHONG cho xac nhan email - giong flow sign-up.yaml cua Maestro
+ * (da xoa), no di thang toi /notes sau khi tao account, khong poll
+ * Mailinator gi ca. Vi vay sign-up la cach uu tien de co 1 session da
+ * auth cho smoke test: khong can MFA code, khong bi rate limit inbox
+ * chung, account moi toanh moi lan chay. Chi dung LoginPage/account test
+ * co dinh khi test can du lieu ben vung (vd enterprise membership).
  */
 export class SignUpPage {
   constructor(private readonly page: Page) {}
@@ -32,18 +31,17 @@ export class SignUpPage {
 
   async goto(): Promise<void> {
     await this.page.goto('/signup');
-    // Cold load ("Starting up the engines" -> multi-tab provider election)
-    // was observed taking up to ~40s on 2026-09-16, well past the ~10s seen
-    // on 2026-09-15 - the dev environment's responsiveness apparently
-    // varies. 45s gives real headroom without masking a genuine hang.
+    // Cold load ("Starting up the engines" -> bau chon provider multi-tab)
+    // quan sat len toi ~40s ngay 2026-09-16, lau hon han ~10s thay ngay
+    // 2026-09-15 - do phan hoi cua dev env hinh nhu thay doi that thuong.
+    // 45s cho du room ma khong che mat 1 cai treo that su.
     await expect(this.emailInput).toBeVisible({ timeout: 45_000 });
   }
 
   /**
-   * Creates a brand new account and lands on /notes, skipping the plan
-   * picker the same way the Maestro flow does (direct navigation rather
-   * than clicking a plan) since which plan is selected isn't the point of
-   * a signup smoke test.
+   * Tao 1 account moi va vao thang /notes, bo qua man chon plan giong
+   * cach flow Maestro lam (navigate thang thay vi click chon plan) vi
+   * chon plan nao khong phai trong tam cua smoke test signup.
    */
   async signUp(email: string, password: string): Promise<void> {
     await this.goto();

@@ -5,11 +5,11 @@ import { PlanSelectionModal } from '../components/PlanSelectionModal';
 type SyncToggleLabel = 'Enable sync' | 'Enable auto sync' | 'Enable realtime sync' | 'Full offline mode';
 
 /**
- * The Settings dialog (opened via AccountMenu.openSettingsMenu()), scoped to
- * the Account section's Profile/Subscription details/Sync/Authentication
- * tabs - the ones this suite actually exercises. Customization/Import &
- * export/Privacy & security/Other sections exist (confirmed 2026-09-17) but
- * aren't covered here.
+ * Dialog Settings (mo qua AccountMenu.openSettingsMenu()), scope vao cac
+ * tab Profile/Subscription details/Sync/Authentication cua section
+ * Account - la cac tab suite nay thuc su dung toi. Cac section
+ * Customization/Import & export/Privacy & security/Other cung co (confirm
+ * 2026-09-17) nhung chua cover o day.
  */
 export class SettingsPage {
   constructor(private readonly page: Page) {}
@@ -40,11 +40,10 @@ export class SettingsPage {
   // --- Profile ---
 
   /**
-   * Several Profile rows render their action button with the exact same
-   * text as the row's own heading (e.g. heading "Change email address" +
-   * button "Change email address"), so an exact-text match resolves to 2
-   * elements - `.last()` picks the button, which always renders after the
-   * heading/description block. Confirmed 2026-09-17.
+   * Vai row trong Profile render nut action voi text giong het heading cua
+   * row do (vd heading "Change email address" + nut "Change email
+   * address"), nen match exact-text se ra 2 element - `.last()` chon dung
+   * nut, luon render sau block heading/description. Confirm 2026-09-17.
    */
   async openChangeEmail(): Promise<void> {
     await this.page.getByText('Change email address', { exact: true }).last().click();
@@ -54,7 +53,7 @@ export class SettingsPage {
     await this.page.getByText('Open', { exact: true }).click();
   }
 
-  /** Opens the "Please verify it's you" password-reauth dialog, same as openChange2faMethod(). */
+  /** Mo dialog reauth password "Please verify it's you", giong openChange2faMethod(). */
   async clickSaveRecoveryKey(): Promise<void> {
     await this.page.getByText('Save', { exact: true }).click();
   }
@@ -79,37 +78,36 @@ export class SettingsPage {
 
   // --- Authentication ---
 
-  /** Same heading-equals-button-text duplication as openChangeEmail() above. */
+  /** Cung loi trung heading-va-button-text nhu openChangeEmail() o tren. */
   async openChangePassword(): Promise<void> {
     await this.page.getByText('Change password', { exact: true }).last().click();
   }
 
-  /** Opens the "Please verify it's you" password-reauth dialog, same as clickSaveRecoveryKey(). */
+  /** Mo dialog reauth password "Please verify it's you", giong clickSaveRecoveryKey(). */
   async openChange2faMethod(): Promise<void> {
     await this.page.getByText('Change', { exact: true }).click();
   }
 
   // --- Subscription details ---
 
-  /** The plan name badge under "CURRENT PLAN" - the two are adjacent siblings in the DOM. */
+  /** Badge ten plan duoi "CURRENT PLAN" - 2 cai nam ke nhau (sibling) trong DOM. */
   get currentPlanName() {
     return this.page.getByText('CURRENT PLAN', { exact: true }).locator('xpath=following-sibling::*[1]');
   }
 
-  /** A usage row's value, e.g. usageFor('Colors') -> "0 of 7" - label/value render as adjacent siblings. */
+  /** Gia tri 1 row usage, vd usageFor('Colors') -> "0 of 7" - label/value render sibling ke nhau. */
   usageFor(label: string) {
     return this.page.getByText(label, { exact: true }).locator('xpath=following-sibling::*[1]');
   }
 
   /**
-   * Uses getByText, not getByRole('button', ...): this "Upgrade" control
-   * (and Compare all plans / Force push / Force pull below) is a real
-   * <button> element, but getByRole consistently finds 0 matches for it
-   * (confirmed 2026-09-17 via a direct evaluate()-vs-locator comparison -
-   * not a timing issue, the button was present and stable throughout).
-   * Likely an accessible-name mismatch (e.g. an icon contributing to the
-   * computed name) rather than anything wrong with the button itself -
-   * getByText matches the same element reliably.
+   * Dung getByText, khong dung getByRole('button', ...): control "Upgrade"
+   * nay (va Compare all plans / Force push / Force pull ben duoi) la
+   * <button> that, nhung getByRole luon tim ra 0 match (confirm 2026-09-17
+   * qua so sanh truc tiep evaluate() voi locator - khong phai do timing,
+   * button van hien dien va on dinh suot). Co le do accessible-name bi
+   * lech (vd icon anh huong ten tinh toan) chu khong phai loi cua button -
+   * getByText thi match dung on dinh.
    */
   async openUpgradeFromSubscription(): Promise<PlanSelectionModal> {
     await this.page.getByText('Upgrade', { exact: true }).click();
@@ -121,15 +119,15 @@ export class SettingsPage {
   // --- Sync ---
 
   /**
-   * The row for a given toggle - the nearest ancestor div that contains a
-   * checkbox, walking up from the row's own exact-text label. Deliberately
-   * not `page.locator('div').filter({ hasText: rowLabel })`: that also
-   * matches every *ancestor* div (the whole SYNC panel included, since
-   * substring-filter matches against the full descendant text), so
-   * `.last()` on labels/checkboxes found within those matches silently
-   * resolves to the LAST toggle in the panel (Full offline mode) instead of
-   * the intended row - confirmed 2026-09-17 by watching toggleSync('Enable
-   * sync') actually flip "Full offline mode" in the paywall it triggered.
+   * Row cua 1 toggle - div ancestor gan nhat co chua checkbox, di len tu
+   * label exact-text cua row do. Co tinh khong dung
+   * `page.locator('div').filter({ hasText: rowLabel })`: cach do cung match
+   * moi div *ancestor* (ca panel SYNC luon, vi filter substring match vao
+   * toan bo text con chau), nen `.last()` tren label/checkbox tim duoc
+   * trong nhung match do se am tham resolve ra toggle CUOI trong panel
+   * (Full offline mode) thay vi row minh muon - confirm 2026-09-17 khi xem
+   * toggleSync('Enable sync') thuc ra lai bat "Full offline mode" trong
+   * paywall no trigger.
    */
   private syncRow(rowLabel: SyncToggleLabel) {
     return this.page
@@ -139,12 +137,12 @@ export class SettingsPage {
   }
 
   /**
-   * Each sync setting is a styled switch: a <label> wraps the actual
-   * <input type="checkbox">, and clicking the input directly times out -
-   * Playwright reports the label "intercepts pointer events" (confirmed
-   * 2026-09-17). Click the label instead, the same "click the thing that's
-   * actually clickable, not the control underneath it" pattern as the
-   * checklist checkbox in NoteEditorPage.
+   * Moi setting sync la 1 switch co style rieng: <label> bao boc
+   * <input type="checkbox"> that, click truc tiep vao input se bi timeout -
+   * Playwright bao label "intercepts pointer events" (confirm 2026-09-17).
+   * Click vao label thay vi input, cung pattern "click cai thuc su click
+   * duoc, dung click vao control ben duoi no" giong checkbox checklist
+   * trong NoteEditorPage.
    */
   private syncToggleLabel(rowLabel: SyncToggleLabel) {
     return this.syncRow(rowLabel).locator('label');
@@ -155,9 +153,9 @@ export class SettingsPage {
   }
 
   /**
-   * All four toggles are Essential-plan-gated on Free (confirmed 2026-09-17):
-   * clicking any of them opens the same upgrade paywall as "Set expiry"
-   * (plan-gating.spec.ts) instead of actually toggling.
+   * Ca 4 toggle deu bi gate boi Essential plan tren Free (confirm
+   * 2026-09-17): click vao bat ky cai nao se mo cung paywall upgrade nhu
+   * "Set expiry" (plan-gating.spec.ts) thay vi thuc su bat toggle.
    */
   async toggleSync(rowLabel: SyncToggleLabel): Promise<void> {
     await this.syncToggleLabel(rowLabel).click();
@@ -167,7 +165,7 @@ export class SettingsPage {
     return this.syncCheckbox(rowLabel).isChecked();
   }
 
-  /** getByText, not getByRole - see openUpgradeFromSubscription()'s comment above. */
+  /** getByText, khong dung getByRole - xem comment openUpgradeFromSubscription() o tren. */
   get forcePushButton() {
     return this.page.getByText('Force push changes', { exact: true });
   }

@@ -1,10 +1,10 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 
 /**
- * Rich-text formatting and the checklist block. See FormattingToolbar and
- * NoteEditorPage.checklistItem()/toggleChecklistItem() for the underlying
- * mechanics - in particular, a checklist checkbox has no accessible role or
- * form control and must be clicked by coordinate offset.
+ * Rich-text formatting va block checklist. Xem FormattingToolbar va
+ * NoteEditorPage.checklistItem()/toggleChecklistItem() de biet co che ben
+ * duoi - cu the la checkbox checklist khong co accessible role hay form
+ * control gi ca, phai click bang coordinate offset.
  */
 
 test.describe('Formatting', () => {
@@ -57,8 +57,8 @@ test.describe('Checklist', () => {
     await editor.toggleChecklistItem(0);
     expect(await editor.isChecklistItemChecked(0)).toBe(true);
 
-    // Toggling again unchecks it - confirms this is a real toggle, not a
-    // one-way state change.
+    // Toggle lan nua se uncheck lai - confirm day la toggle that, khong
+    // phai trang thai chi doi 1 chieu.
     await editor.toggleChecklistItem(0);
     expect(await editor.isChecklistItemChecked(0)).toBe(false);
   });

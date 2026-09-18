@@ -1,7 +1,7 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 import { PlanSelectionModal } from '../../components/PlanSelectionModal';
 
-/** The "Select a plan" pricing modal, reached directly via the account menu's Upgrade item. */
+/** Modal pricing "Select a plan", vao truc tiep qua item Upgrade cua account menu. */
 test.describe('Plan selection modal', () => {
   test('Yearly billing (the default) shows one card per paid plan with correct pricing', async ({
     page,
@@ -27,12 +27,12 @@ test.describe('Plan selection modal', () => {
 
       await planModal.selectBilling('Monthly');
 
-      // Expected: exactly 2 paid-plan cards (Essential $1.99/mo, Pro
-      // $6.99/mo). Actually renders 3 - a second "Essential" card at
-      // $24/month, otherwise identical to the correct one. Verified via
-      // screenshot + innerText dump, not a snapshot-tooling artifact. This
-      // test is expected to fail until the duplicate card is fixed; if it
-      // starts passing, remove test.fail() here.
+      // Ky vong: dung 2 card paid-plan (Essential $1.99/thang, Pro
+      // $6.99/thang). Thuc te render 3 - card "Essential" thu 2 o gia
+      // $24/thang, con lai giong het card dung. Da verify qua screenshot +
+      // innerText dump, khong phai loi cua tooling snapshot. Test nay ky
+      // vong se fail cho toi khi fix duoc card bi trung; neu no bat dau
+      // pass thi bo test.fail() o day di.
       await expect(planModal.paidPlanTrialButtons).toHaveCount(2);
     },
   );

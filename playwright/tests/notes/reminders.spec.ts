@@ -2,10 +2,10 @@ import { test, expect } from '../../fixtures/auth.fixture';
 import { tomorrowDateDDMMYYYY } from '../../utils/env';
 
 /**
- * Reminders. See NoteContextMenu.addReminder() for the underlying flow and
- * why an explicit future date/time is required rather than the dialog's own
- * default (it's a snapshot from when the dialog opened, and can itself
- * already be "in the past" by the time you submit).
+ * Reminders. Xem NoteContextMenu.addReminder() de biet flow ben duoi va ly
+ * do phai truyen date/time tuong lai tuong minh thay vi dung default cua
+ * dialog (default do la snapshot tu luc dialog mo, co the da "qua khu" mat
+ * roi vao luc submit).
  */
 
 test.describe('Reminders', () => {

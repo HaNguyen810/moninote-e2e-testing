@@ -2,19 +2,19 @@ import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 /**
- * The circular profile-menu button (top-left of the notes list) and its
- * dropdown: plan badge, Toggle dark/light mode, Enterprise, Upgrade,
- * Settings, Logout. Confirmed via manual QA screenshots 2026-09-15.
+ * Nut menu profile hinh tron (goc tren trai cua notes list) va dropdown cua
+ * no: badge plan, Toggle dark/light mode, Enterprise, Upgrade, Settings,
+ * Logout. Confirm qua screenshot manual QA ngay 2026-09-15.
  */
 export class AccountMenu {
   constructor(private readonly page: Page) {}
 
   private get menuButton() {
-    // Confirmed by direct inspection 2026-09-15: this is the first <button>
-    // in DOM order on /notes (no accessible name/aria-label of its own -
-    // it's an avatar icon), positioned top-left next to the "MoniNotes"
-    // wordmark. Clicking it reveals the plan badge, account email, and
-    // Toggle dark/light mode / Enterprise / Upgrade / Settings / Logout.
+    // Confirm boi inspect truc tiep ngay 2026-09-15: day la <button> dau
+    // tien theo thu tu DOM tren /notes (khong co accessible name/aria-label
+    // rieng - no la icon avatar), nam goc tren trai canh chu "MoniNotes".
+    // Click vao se hien badge plan, email account, va Toggle dark/light
+    // mode / Enterprise / Upgrade / Settings / Logout.
     return this.page.locator('button').first();
   }
 
@@ -27,8 +27,8 @@ export class AccountMenu {
     await this.open();
     await this.page.getByText('Logout', { exact: true }).click();
 
-    // A logged-out-locally account with unsynced notes shows a confirmation
-    // dialog ("You have unsynced notes...") before actually logging out.
+    // Account co note chua sync se hien dialog confirm ("You have unsynced
+    // notes...") truoc khi thuc su logout.
     const confirmYes = this.page.getByRole('button', { name: 'Yes' });
     if (await confirmYes.isVisible({ timeout: 3_000 }).catch(() => false)) {
       if (options.confirmDiscardUnsyncedNotes === false) {
@@ -49,7 +49,7 @@ export class AccountMenu {
     await this.page.locator('[data-test-id="menu-button-settings"]').click();
   }
 
-  /** Opens the "Select a plan" pricing modal directly (see PlanSelectionModal). */
+  /** Mo thang modal pricing "Select a plan" (xem PlanSelectionModal). */
   async openUpgradeMenu(): Promise<void> {
     await this.open();
     await this.page.locator('[data-test-id="menu-button-upgrade"]').click();

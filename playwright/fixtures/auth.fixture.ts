@@ -8,32 +8,32 @@ import { SIGN_IN_ACCOUNT, SIGN_UP_PASSWORD, generateSignUpEmail } from '../utils
 import { snapshotInboxIds, waitForVerificationCode } from '../utils/mailinator';
 
 interface AuthFixtures {
-  /** A NotesListPage for an already-signed-in session on the fixed test account. */
+  /** NotesListPage cho session da sign-in san tren account test co dinh. */
   notesPage: NotesListPage;
   enterprisePage: EnterprisePage;
   /**
-   * A NotesListPage for a brand-new account created via sign-up, not
-   * sign-in. Prefer this for smoke tests: no MFA code to wait for, no
-   * shared-inbox rate limiting, a clean account with zero existing notes
-   * every run. Reach for `notesPage` instead only when a test specifically
-   * needs the fixed account's persistent data (e.g. enterprise membership).
+   * NotesListPage cho 1 account moi toanh tao qua sign-up, khong phai
+   * sign-in. Uu tien dung cai nay cho smoke test: khong can cho MFA code,
+   * khong bi rate limit inbox chung, account sach khong co note nao moi
+   * lan chay. Chi dung `notesPage` khi test can du lieu ben vung cua
+   * account co dinh (vd enterprise membership).
    */
   freshNotesPage: NotesListPage;
   /**
-   * TODO: structure-only, not wired up yet. Pending admin credentials
-   * (see ADMIN_ACCOUNT in utils/env.ts) and a first look at how admin
-   * sign-in actually works - may not be the same /login flow as a regular
-   * account. See AdminConsolePage.ts / tests/admin/admin-console.spec.ts.
+   * TODO: moi co structure, chua wire that. Dang cho credential admin
+   * (xem ADMIN_ACCOUNT trong utils/env.ts) va can xem qua flow sign-in
+   * admin thuc su the nao - co the khac /login flow cua account thuong.
+   * Xem AdminConsolePage.ts / tests/admin/admin-console.spec.ts.
    */
   adminConsolePage: AdminConsolePage;
 }
 
 /**
- * Extends the base Playwright test with a `notesPage` fixture that signs in
- * with the fixed Mailinator test account (see utils/env.ts) before the test
- * body runs, mirroring the now-removed Maestro sign-in.yaml flow's use of
- * the same account. Prefer this over signing up a fresh account per test
- * (Mailinator's public API has rate limits - see utils/mailinator.ts).
+ * Extend base test cua Playwright them fixture `notesPage`, tu dong
+ * sign-in bang account test Mailinator co dinh (xem utils/env.ts) truoc
+ * khi test body chay, giong cach flow sign-in.yaml cua Maestro (da xoa)
+ * dung account nay. Uu tien dung cai nay hon la sign-up account moi cho
+ * moi test (Mailinator public API co rate limit - xem utils/mailinator.ts).
  */
 export const test = base.extend<AuthFixtures>({
   notesPage: async ({ page }, use) => {
@@ -57,7 +57,7 @@ export const test = base.extend<AuthFixtures>({
   },
 
   enterprisePage: async ({ page, notesPage }, use) => {
-    // Depending on notesPage ensures sign-in has already happened.
+    // Phu thuoc vao notesPage de dam bao sign-in da xong roi.
     void notesPage;
     await use(new EnterprisePage(page));
   },

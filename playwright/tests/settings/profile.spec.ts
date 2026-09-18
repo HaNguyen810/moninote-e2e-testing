@@ -2,12 +2,12 @@ import { test, expect } from '../../fixtures/auth.fixture';
 import { SettingsPage } from '../../pages/SettingsPage';
 
 /**
- * Settings > Profile, verified against a fresh Free-plan account. Delete
- * account and the two Sessions actions (Logout / Log out from all devices)
- * are deliberately never clicked here - same "entry point only" restraint
- * this suite already applies to irreversible/destructive actions elsewhere
- * (see sharing.spec.ts's Lock coverage) - only their warning/confirmation
- * text is verified.
+ * Settings > Profile, verify tren account Free-plan moi tao. Delete
+ * account va 2 action Sessions (Logout / Log out from all devices) co tinh
+ * khong bao gio click o day - cung kieu tiet che "chi test entry point"
+ * suite nay da ap dung cho cac action irreversible/destructive khac (xem
+ * phan Lock trong sharing.spec.ts) - chi verify text warning/confirmation
+ * cua chung thoi.
  */
 test.describe('Settings - Profile', () => {
   test('shows the account plan/email and the Sessions section', async ({ page, freshNotesPage }) => {

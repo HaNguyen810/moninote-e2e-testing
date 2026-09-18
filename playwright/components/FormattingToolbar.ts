@@ -1,17 +1,17 @@
 import type { Page } from '@playwright/test';
 
 /**
- * The rich-text formatting toolbar pinned above the editor body (Bold,
- * Italic, Underline, More -> Strikethrough/Code/Checklist/etc). Applies to
- * whatever text is currently selected in the body - callers select text
- * first (e.g. NoteEditorPage.selectAllInBody()).
+ * Toolbar format rich-text ghim tren dau body editor (Bold, Italic,
+ * Underline, More -> Strikethrough/Code/Checklist/...). Ap dung cho doan
+ * text dang duoc select trong body - noi goi phai select text truoc (vd
+ * NoteEditorPage.selectAllInBody()).
  */
 export class FormattingToolbar {
   constructor(private readonly page: Page) {}
 
-  // Same multi-tab mounting issue as NoteEditorPage's title/tag fields - a
-  // previous tab's toolbar can still be in the DOM, so every button here
-  // takes .last().
+  // Bi loi mount multi-tab giong field title/tag cua NoteEditorPage - toolbar
+  // cua tab truoc van co the con trong DOM, nen moi button o day deu phai
+  // dung .last().
   private button(title: string) {
     return this.page.locator(`button[title="${title}"]`).last();
   }
@@ -28,17 +28,16 @@ export class FormattingToolbar {
     await this.button('Underline').click();
   }
 
-  /** Opens the "More" formatting overflow (Strikethrough, Code, Checklist, ...). */
+  /** Mo overflow "More" cua toolbar format (Strikethrough, Code, Checklist, ...). */
   async openMore(): Promise<void> {
     await this.button('More').click();
   }
 
   /**
-   * Converts the current line into a checklist item. Reached via More ->
-   * Checklist on the formatting toolbar (confirmed 2026-09-16) - distinct
-   * from the "+" InsertBlockMenu's "Task list" item, which was not
-   * exercised here; both may produce equivalent results but only this path
-   * has been verified.
+   * Chuyen dong hien tai thanh checklist item. Vao qua More -> Checklist
+   * tren formatting toolbar (confirm 2026-09-16) - khac voi item "Task
+   * list" cua InsertBlockMenu dau "+", cai do chua test o day; ca 2 co the
+   * cho ket qua giong nhau nhung chi duong nay da duoc verify.
    */
   async convertLineToChecklist(): Promise<void> {
     await this.openMore();

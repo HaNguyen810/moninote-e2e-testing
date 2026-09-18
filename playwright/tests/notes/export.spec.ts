@@ -1,19 +1,19 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 
 /**
- * Export as. See NoteContextMenu.exportAs() - Markdown/Text/HTML are
- * genuine browser file downloads (Playwright's `download` event), so their
- * content can be read and asserted on directly.
+ * Export as. Xem NoteContextMenu.exportAs() - Markdown/Text/HTML la file
+ * download that su cua browser (event `download` cua Playwright), nen doc
+ * va assert truc tiep noi dung duoc.
  *
- * PDF is NOT covered here. Confirmed 2026-09-16: clicking it produces no
- * `download` event (waited 30s), no new page/tab, no `window.print()` call
- * (monkey-patched to check), and no PDF-related network request - the
- * click appears to be a complete no-op in headless Chromium automation.
- * This could be a real silent-failure bug, or a headless-specific
- * limitation of Chromium's print-to-PDF path that doesn't reproduce on a
- * real desktop browser - automation alone can't tell those apart here, so
- * this needs a manual check on real (non-headless) Chrome before either
- * writing a bug report or an automated test for it.
+ * PDF KHONG cover o day. Confirm 2026-09-16: click vao no khong ra event
+ * `download` nao ca (cho 30s), khong mo tab/page moi, khong goi
+ * `window.print()` (da monkey-patch de check), va khong co network request
+ * lien quan PDF - click co ve hoan toan la no-op trong Chromium headless
+ * automation. Co the la bug silent-failure that, hoac chi la gioi han rieng
+ * cua path print-to-PDF cua Chromium headless khong reproduce tren browser
+ * desktop that - automation don thuan khong phan biet duoc 2 kha nang nay,
+ * nen can check manual tren Chrome that (khong headless) truoc khi viet bug
+ * report hay test tu dong cho no.
  */
 
 test.describe('Export as', () => {
@@ -33,9 +33,9 @@ test.describe('Export as', () => {
     const stream = await download.createReadStream();
     let content = '';
     for await (const chunk of stream) content += chunk.toString();
-    // Trimmed: the export adds trailing blank lines after the body text
-    // (confirmed 2026-09-16) - a cosmetic export-formatting detail, not
-    // something worth asserting on exactly here.
+    // Trim: export co them dong trong o cuoi sau body text (confirm
+    // 2026-09-16) - chi la chi tiet format cosmetic, khong dang assert
+    // chinh xac o day.
     expect(content.trim()).toBe('# Export candidate\n\nSome content to export.');
   });
 

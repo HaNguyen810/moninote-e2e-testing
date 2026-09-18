@@ -2,10 +2,10 @@ import { test, expect } from '../../fixtures/auth.fixture';
 import { SettingsPage } from '../../pages/SettingsPage';
 
 /**
- * Settings > Sync, verified against a fresh Free-plan account. Sync controls
- * are Essential-plan-gated (confirmed 2026-09-17) - the same paywall pattern
- * already covered for "Set expiry" (plan-gating.spec.ts) and uploads
- * (upload-attachment.spec.ts), just on a different feature.
+ * Settings > Sync, verify tren account Free-plan moi tao. Sync controls bi
+ * gate boi Essential-plan (confirm 2026-09-17) - cung pattern paywall da
+ * cover cho "Set expiry" (plan-gating.spec.ts) va upload
+ * (upload-attachment.spec.ts), chi khac o feature thoi.
  */
 test.describe('Settings - Sync', () => {
   test('all four toggles are present and off, force push/pull disabled', async ({ page, freshNotesPage }) => {
@@ -34,7 +34,7 @@ test.describe('Settings - Sync', () => {
 
     await expect(page.getByText('Unlock this feature today')).toBeVisible();
     await expect(page.getByText('Sync controls is not available on this plan.')).toBeVisible();
-    expect(await settings.isSyncEnabled('Enable sync')).toBe(false); // still off - blocked, not toggled
+    expect(await settings.isSyncEnabled('Enable sync')).toBe(false); // van tat - bi chan, khong phai bat len
   });
 
   test('"Compare all plans" from the sync paywall opens the full plan comparison modal', async ({
@@ -47,7 +47,7 @@ test.describe('Settings - Sync', () => {
     await settings.goToSync();
     await settings.toggleSync('Enable sync');
 
-    // getByText, not getByRole - see PlanSelectionModal's paidPlanTrialButtons comment.
+    // getByText, khong dung getByRole - xem comment paidPlanTrialButtons cua PlanSelectionModal.
     await page.getByText('Compare all plans', { exact: true }).click();
 
     await expect(page.getByText('Select a plan', { exact: true })).toBeVisible();

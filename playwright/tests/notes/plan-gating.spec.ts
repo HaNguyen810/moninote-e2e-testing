@@ -1,12 +1,12 @@
 import { test, expect } from '../../fixtures/auth.fixture';
 
 /**
- * Features gated behind a paid plan, verified against a fresh Free-plan
- * account (freshNotesPage always signs up fresh, which lands on Free -
- * confirmed 2026-09-15/16). Not testing the paid-plan path itself, since
- * there's no automated way to actually upgrade a test account here - only
- * that the gate correctly blocks a Free account with an upgrade prompt
- * rather than silently failing or (worse) letting the action through.
+ * Feature bi gate boi paid plan, verify tren account Free-plan moi tao
+ * (freshNotesPage luon sign-up moi, vao thang Free - confirm
+ * 2026-09-15/16). Khong test path paid-plan that su, vi chua co cach tu
+ * dong upgrade test account o day - chi test gate co chan dung account
+ * Free bang upgrade prompt hay khong, thay vi fail am tham hoac (te hon)
+ * cho action lot qua.
  */
 
 test.describe('Plan gating', () => {
@@ -19,7 +19,7 @@ test.describe('Plan gating', () => {
 
     await freshNotesPage.contextMenu.setExpiry(freshNotesPage.noteInList('Expiry gating check'));
 
-    await expect(page).toHaveURL(/\/notes/); // no navigation away
+    await expect(page).toHaveURL(/\/notes/); // khong bi navigate di dau ca
     await expect(
       page.getByText('Expiring notes is not available on this plan.')
     ).toBeVisible();

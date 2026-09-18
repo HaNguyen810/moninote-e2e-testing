@@ -4,7 +4,7 @@ import { NoteEditorPage } from './NoteEditorPage';
 import { AccountMenu } from '../components/AccountMenu';
 import { NoteContextMenu } from '../components/NoteContextMenu';
 
-/** The /notes list view (left sidebar + note list) and note creation entry point. */
+/** View list /notes (sidebar trai + note list) va entry point tao note. */
 export class NotesListPage {
   readonly accountMenu: AccountMenu;
   readonly contextMenu: NoteContextMenu;
@@ -15,7 +15,7 @@ export class NotesListPage {
   }
 
   private get addNoteButton() {
-    // "+" in the top toolbar - opens a fresh untitled note in the editor pane.
+    // Nut "+" tren toolbar top - mo 1 note trong (chua co title) trong editor pane.
     return this.page.getByRole('button', { name: 'New tab' }).or(this.page.getByText('Add a note'));
   }
 
@@ -31,7 +31,7 @@ export class NotesListPage {
     await expect(this.searchBox).toBeVisible();
   }
 
-  /** Opens a new, empty note and returns its editor page object. */
+  /** Mo 1 note trong moi va tra ve editor page object cua no. */
   async createNote(): Promise<NoteEditorPage> {
     await this.addNoteButton.first().click();
     const editor = new NoteEditorPage(this.page);
@@ -40,23 +40,22 @@ export class NotesListPage {
   }
 
   /**
-   * A note's title as it appears in the sidebar list specifically - scoped
-   * to the virtualized list container (data-testid="virtuoso-item-list"),
-   * since a bare page-wide getByText(title) also matches the same title
-   * rendered as the open editor's tab button, causing a strict-mode
-   * violation (confirmed 2026-09-15).
+   * Title cua 1 note nhu no hien trong sidebar list - scope vao container
+   * virtualized list (data-testid="virtuoso-item-list"), vi getByText(title)
+   * tren ca page se match luon title do o tab editor dang mo, gay loi
+   * strict-mode (confirm 2026-09-15).
    */
   noteInList(title: string) {
     return this.page.getByTestId('virtuoso-item-list').getByText(title, { exact: true });
   }
 
   /**
-   * Live substring search, confirmed case-insensitive and single-character-
-   * triggered during manual QA (2026-09-13/15) - see project memory on
-   * Enterprise search consistency. Fills via the box directly rather than
-   * pressSequentially, since a real user can paste too and both should work
-   * the same way for a search box (unlike the invoice-search bug found on
-   * Billing, this box is confirmed to handle programmatic input).
+   * Search live theo substring, confirm khong phan biet hoa thuong va
+   * trigger tu 1 ky tu trong lan manual QA (2026-09-13/15) - xem memory
+   * project ve tinh nhat quan search Enterprise. Fill truc tiep vao box
+   * thay vi pressSequentially, vi nguoi dung that cung co the paste va ca 2
+   * cach phai hoat dong nhu nhau cho o search (khac voi bug search invoice
+   * tren Billing, box nay confirm xu ly tot input dua vao bang code).
    */
   async search(query: string): Promise<void> {
     await this.searchBox.fill(query);
@@ -67,10 +66,9 @@ export class NotesListPage {
   }
 
   /**
-   * Left sidebar navigation - Notes/Favorites/Reminders/Trash/Archive.
-   * These are clickable <div>s with a <span> text label, not <button>
-   * elements - getByRole('button', ...) matches none of them (confirmed
-   * 2026-09-15).
+   * Navigation sidebar trai - Notes/Favorites/Reminders/Trash/Archive. Day
+   * la <div> co the click voi label <span>, khong phai element <button> -
+   * getByRole('button', ...) khong match cai nao (confirm 2026-09-15).
    */
   private sidebarItem(name: string) {
     return this.page.getByText(name, { exact: true });
@@ -97,16 +95,27 @@ export class NotesListPage {
   }
 
   /**
-   * Colors become their own navigable sidebar collection once created
-   * (confirmed 2026-09-16, see NoteContextMenu.assignNewColor()) - same
-   * clickable-<div> pattern as Notes/Favorites/Trash/Archive.
+   * Color se thanh 1 collection dieu huong duoc rieng trong sidebar sau khi
+   * tao (confirm 2026-09-16, xem NoteContextMenu.assignNewColor()) - cung
+   * pattern <div> click duoc nhu Notes/Favorites/Trash/Archive.
    */
   async goToColor(colorName: string): Promise<void> {
     await this.sidebarItem(colorName).click();
   }
 
-  /** The "PINNED" section header that appears above the list once any note is pinned. */
+  /** Header section "PINNED" hien phia tren list khi co it nhat 1 note duoc pin. */
   get pinnedSectionHeader() {
     return this.page.getByText('PINNED', { exact: true });
+  }
+
+  /**
+   * Icon "Notebooks" tren top rail (dung attribute `title`, khong phai text
+   * sidebar list nhu cac item tren). Neu chi co 1 notebook, click vao se
+   * vao thang notebook do va hien note cua no luon (confirm 2026-09-17) -
+   * chua investigate hanh vi khi co nhieu notebook (list folder de drill
+   * vao hay flat view).
+   */
+  async goToNotebooks(): Promise<void> {
+    await this.page.getByTitle('Notebooks').click();
   }
 }

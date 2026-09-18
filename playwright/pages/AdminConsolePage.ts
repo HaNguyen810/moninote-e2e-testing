@@ -1,12 +1,11 @@
 import type { Page } from '@playwright/test';
 
 /**
- * The Enterprise Admin console (reached via EnterprisePage.openEnterprise()).
- * Structure-only for now: we haven't logged in with an admin account or seen
- * the actual console UI yet, so there's nothing here to assert against.
- * Fill in real locators/methods once admin credentials are available and the
- * console has been explored (see tests/admin/admin-console.spec.ts for the
- * planned test cases this should support).
+ * Enterprise Admin console (vao qua EnterprisePage.openEnterprise()).
+ * Hien tai moi co structure: chua login duoc bang account admin hay xem
+ * qua UI console that, nen chua co gi de assert ca. Dien locator/method
+ * that khi co credential admin va da explore qua console (xem
+ * tests/admin/admin-console.spec.ts de biet cac test case du dinh).
  */
 export class AdminConsolePage {
   constructor(private readonly page: Page) {}

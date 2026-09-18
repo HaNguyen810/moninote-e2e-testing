@@ -1,8 +1,7 @@
 /**
- * Polls the Mailinator public API for a MoniNotes verification/MFA code.
- * Ported from the now-removed Maestro web flows' snapshot-inbox/get-mfa-code
- * scripts, keeping the same polling/filtering behavior against the same
- * rate-limited public inbox.
+ * Poll Mailinator public API de lay code verification/MFA cua MoniNotes.
+ * Chuyen tu script snapshot-inbox/get-mfa-code cua Maestro web (da xoa),
+ * giu nguyen logic poll/filter tren cung 1 inbox public bi rate limit.
  */
 
 interface MailinatorMessage {
@@ -16,10 +15,9 @@ function inboxNameFor(email: string): string {
 }
 
 /**
- * Snapshot the message ids already in the inbox before triggering a new
- * login/signup, so a later poll can ignore stale codes from earlier runs.
- * Mailinator's public API has no delete endpoint, so this is the only way
- * to avoid picking up an old message.
+ * Chup lai id cac message dang co trong inbox truoc khi trigger login/signup
+ * moi, de lan poll sau bo qua code cu tu lan chay truoc. Mailinator public
+ * API khong co endpoint xoa, nen day la cach duy nhat tranh lay nham message cu.
  */
 export async function snapshotInboxIds(email: string): Promise<Set<string>> {
   try {
@@ -28,33 +26,32 @@ export async function snapshotInboxIds(email: string): Promise<Set<string>> {
     const body = (await res.json()) as { msgs?: MailinatorMessage[] };
     return new Set((body.msgs ?? []).map((m) => m.id));
   } catch {
-    // Falls back to accepting any matching message - the subject filter below
-    // already guards against grabbing the wrong email.
+    // Fallback: chap nhan bat ky message nao match - filter subject ben duoi
+    // da guard san viec lay nham email khac.
     return new Set();
   }
 }
 
 export interface WaitForCodeOptions {
-  /** Regex the email subject must match, e.g. /verification code/i. */
+  /** Regex ma subject email phai match, vd /verification code/i. */
   subjectPattern: RegExp;
-  /** Ids to ignore, from a prior snapshotInboxIds() call. */
+  /** Cac id can bo qua, lay tu snapshotInboxIds() truoc do. */
   knownIds?: Set<string>;
   timeoutMs?: number;
   pollIntervalMs?: number;
 }
 
 /**
- * Polls Mailinator until a 6-digit code arrives in an email matching
- * `subjectPattern`, or throws after `timeoutMs`.
+ * Poll Mailinator cho toi khi co code 6 so trong email match voi
+ * `subjectPattern`, hoac throw sau `timeoutMs`.
  */
 export async function waitForVerificationCode(
   email: string,
   options: WaitForCodeOptions
 ): Promise<string> {
-  // Mailinator's public API rate-limits aggressive polling (HTTP 429 /
-  // Cloudflare error 1015, confirmed 2026-09-15) - 15s matches the interval
-  // already proven out by the now-removed Maestro get-mfa-code.js script
-  // against this same shared inbox tier.
+  // Mailinator public API se rate-limit neu poll qua nhanh (HTTP 429 /
+  // Cloudflare error 1015, confirm 2026-09-15) - 15s la interval da proven
+  // qua o script get-mfa-code.js cua Maestro (da xoa) tren cung 1 tier inbox nay.
   const { subjectPattern, knownIds = new Set(), timeoutMs = 90_000, pollIntervalMs = 15_000 } =
     options;
   const inbox = inboxNameFor(email);
@@ -81,7 +78,7 @@ export async function waitForVerificationCode(
         if (match) return match[0];
       }
     } catch {
-      // Transient network hiccup or a rate-limited/non-JSON response - keep polling.
+      // Loi mang tam thoi hoac response bi rate-limit/khong phai JSON - cu poll tiep.
     }
 
     await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
